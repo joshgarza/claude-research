@@ -24,9 +24,10 @@ CLAUDE.md          # This file — the single entry point for every session
 
 1. **Read this file** (`CLAUDE.md`) in full.
 2. **Check `sessions.md`** to understand what's been explored recently.
-3. **Search `research/`** for prior work related to today's topic. Use grep/glob to find relevant tags and content.
-4. **Search `principles/`** for existing distilled knowledge that may be relevant.
-5. **Begin research.** Follow the research file format below.
+3. **Search `principles/` first.** Principles are the primary knowledge base — distilled, opinionated, and tested. If relevant principles exist, use them as the starting point.
+4. **Fall back to `research/` only if needed.** If principles don't exist for the topic, or if you need supplementary detail (dates, sources, open questions) that principles don't capture, search raw research files.
+5. **Start from scratch if neither exists.** If no principles or research cover the topic, begin fresh web research.
+6. **Begin research.** Follow the research file format below.
 
 ### Ending a Session
 
