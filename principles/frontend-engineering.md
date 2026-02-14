@@ -65,5 +65,43 @@ Opinionated, practical engineering guidance for building frontend applications i
 - **When:** Any project with a CI pipeline and deployment target.
 - **Source:** [research/2026-02-13-frontend-engineering-practices.md](../research/2026-02-13-frontend-engineering-practices.md)
 
+### Patch React/Next.js Immediately on Security Releases
+- **What:** Subscribe to React and Next.js security advisories. Patch within 48 hours of disclosure. Verify patches are complete — the Dec 2025 chain required 19.2.2→19.2.3→19.2.4.
+- **Why:** CVE-2025-55182 (React2Shell, CVSS 10.0) was exploited within 48 hours. RondoDox botnet actively scanning. Initial patches were incomplete.
+- **When:** Any project using RSC or Server Actions.
+- **Source:** [research/2026-02-14-frontend-engineering-update.md](../research/2026-02-14-frontend-engineering-update.md)
+
+### Treat Server Actions as Public Endpoints
+- **What:** Every `"use server"` function is a public HTTP endpoint. Apply: input validation (Zod), authentication, authorization, and never capture secrets in closures.
+- **Why:** Server Actions are callable via HTTP. Without validation/auth, they're open attack surfaces. Multiple CVEs in Dec 2025–Jan 2026 targeted these endpoints.
+- **When:** Any project using Server Actions (Next.js, React Router v7 Framework Mode).
+- **Source:** [research/2026-02-14-frontend-engineering-update.md](../research/2026-02-14-frontend-engineering-update.md)
+
+### CSS Anchor Positioning Over JS Libraries
+- **What:** Use CSS anchor positioning for tooltips, popovers, and dropdowns. Replace Popper.js / Floating UI with native CSS.
+- **Why:** Baseline cross-browser as of January 2026 (Chrome, Firefox 147, Safari). No JS overhead, browser handles overflow and repositioning.
+- **When:** New components. Migrate existing components opportunistically.
+- **When NOT:** If you need to support browsers older than ~2024.
+- **Source:** [research/2026-02-14-frontend-engineering-update.md](../research/2026-02-14-frontend-engineering-update.md)
+
+### No Runtime CSS-in-JS for New Projects
+- **What:** Do not start new projects with styled-components or Emotion. Use Tailwind CSS, CSS Modules, StyleX, or Panda CSS.
+- **Why:** styled-components entered maintenance mode (Jan 2024). RSC incompatible. Runtime overhead unacceptable for modern performance budgets.
+- **When:** All new projects. Existing codebases can continue but should plan migration.
+- **Source:** [research/2026-02-14-frontend-engineering-update.md](../research/2026-02-14-frontend-engineering-update.md)
+
+### npm Supply Chain Security Hygiene
+- **What:** Use pnpm's strict dependency model. Enable npm provenance checking. Use Trusted Publishing (OIDC) for CI. Set minimum release age. Use lockfile-lint.
+- **Why:** 2025 saw multiple major npm supply chain attacks (Shai-Hulud, self-replicating worm affecting 796 packages). pnpm 10 blocks lifecycle scripts by default.
+- **When:** All projects. Prioritize for anything with user data.
+- **Source:** [research/2026-02-14-frontend-engineering-update.md](../research/2026-02-14-frontend-engineering-update.md)
+
+### Better Auth for New Projects
+- **What:** Use Better Auth instead of Auth.js/NextAuth for new projects. TypeScript-first, framework-agnostic, built-in MFA/rate limiting, mature passkey support.
+- **Why:** Auth.js team now maintained by Better Auth team, who recommend Better Auth for new projects. Auth.js passkey support still experimental.
+- **When:** New projects needing authentication. Existing Auth.js projects: no urgent migration needed.
+- **Source:** [research/2026-02-14-frontend-engineering-update.md](../research/2026-02-14-frontend-engineering-update.md)
+
 ## Revision History
 - 2026-02-13: Initial extraction from [research/2026-02-13-frontend-engineering-practices.md](../research/2026-02-13-frontend-engineering-practices.md).
+- 2026-02-14: Added 6 new principles (security patching, server action security, CSS anchor positioning, no runtime CSS-in-JS, npm supply chain hygiene, Better Auth) from [research/2026-02-14-frontend-engineering-update.md](../research/2026-02-14-frontend-engineering-update.md).

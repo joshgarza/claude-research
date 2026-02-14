@@ -27,10 +27,10 @@ Opinionated, practical guidance for DevOps and infrastructure engineering in 202
 - **Source:** [research/2026-02-13-devops-infrastructure-practices.md](../research/2026-02-13-devops-infrastructure-practices.md)
 
 ### Supply Chain Security Is Mandatory
-- **What:** SBOM generation (Syft/Trivy), SLSA build attestation, artifact signing (Sigstore/cosign), dependency auditing (`npm audit`/Snyk) in CI. Pin dependencies to exact versions. Scan container images.
-- **Why:** The "Shai-Hulud" npm attack (2025) compromised thousands of packages. Supply chain attacks are the #1 growing threat vector. SBOM is now a compliance requirement in many contexts.
+- **What:** SBOM generation (Syft/Trivy), SLSA build attestation, artifact signing (Sigstore/cosign), dependency auditing (`npm audit`/Snyk/Socket.dev) in CI. Pin dependencies to exact versions. Scan container images. Add behavioral analysis (Socket.dev) to catch threats CVE scanning misses.
+- **Why:** Supply chain attacks doubled — costs approaching $80B by 2026. Third-party breaches now 30% of all incidents (up from 15%). Malicious packages up 220% YoY. SBOM is now a CISA regulatory requirement for federal software. Organizations with SBOMs achieve 264-day faster remediation. Code signing certificate validity capped at 460 days (March 2026, CA/B Forum).
 - **When:** Every production application. Integrate into CI from day one.
-- **Source:** [research/2026-02-13-devops-infrastructure-practices.md](../research/2026-02-13-devops-infrastructure-practices.md)
+- **Source:** [research/2026-02-13-devops-infrastructure-practices.md](../research/2026-02-13-devops-infrastructure-practices.md), [research/2026-02-14-devops-infrastructure-update.md](../research/2026-02-14-devops-infrastructure-update.md)
 
 ### Secrets Manager, Not .env Files
 - **What:** Use Doppler or Infisical (SaaS) or Vault (self-hosted) for secrets. Inject at runtime, not build time. Never share `.env` files over Slack. Never commit secrets to Git.
@@ -64,10 +64,46 @@ Opinionated, practical guidance for DevOps and infrastructure engineering in 202
 - **Source:** [research/2026-02-13-devops-infrastructure-practices.md](../research/2026-02-13-devops-infrastructure-practices.md)
 
 ### FinOps from Day One
-- **What:** Tag all resources by team/service/environment. Rightsize instances. Spot instances for fault-tolerant workloads. Shut down dev/staging off-hours. Track cost per deployment with tools like Infracost, Vantage, or CloudZero.
-- **Why:** 30-40% of cloud spend is wasted. Without cost visibility, teams have no incentive to optimize. Infracost in CI shows "this Terraform change costs $X/month" before merge.
+- **What:** Tag all resources by team/service/environment. Rightsize instances. Spot instances for fault-tolerant workloads. Shut down dev/staging off-hours. Track cost per deployment with tools like Infracost, Vantage, or CloudZero. Pre-deployment cost gates to block services exceeding thresholds.
+- **Why:** 30-40% of cloud spend is wasted. Without cost visibility, teams have no incentive to optimize. Infracost in CI shows "this Terraform change costs $X/month" before merge. Platform engineering predictions: FinOps becoming a hard requirement with AI-specific budgets for token/inference costs.
 - **When:** Any cloud deployment. The longer you wait, the harder it is to retrofit tagging and visibility.
-- **Source:** [research/2026-02-13-devops-infrastructure-practices.md](../research/2026-02-13-devops-infrastructure-practices.md)
+- **Source:** [research/2026-02-13-devops-infrastructure-practices.md](../research/2026-02-13-devops-infrastructure-practices.md), [research/2026-02-14-devops-infrastructure-update.md](../research/2026-02-14-devops-infrastructure-update.md)
+
+### AI Amplifies, Doesn't Fix
+- **What:** DORA 2025 shows AI adoption correlates with higher throughput AND higher instability. AI amplifies existing dynamics — strong teams improve, struggling teams get worse. Platform quality is the differentiator.
+- **Why:** 90% of tech professionals use AI. But teams adopting AI without strong platform foundations see performance harm — more change failures, increased rework, longer recovery times.
+- **When:** Before any AIOps or AI-assisted DevOps adoption. Fix your platform, CI/CD, and observability foundations first.
+- **When NOT:** Don't use this as an excuse to avoid AI entirely. The throughput gains are real — but only with the right foundations.
+- **Source:** [research/2026-02-14-devops-infrastructure-update.md](../research/2026-02-14-devops-infrastructure-update.md)
+
+### Policy-as-Code for Governance
+- **What:** Use OPA/Gatekeeper for complex compliance logic, Kyverno for Kubernetes-native YAML policies, Kubernetes ValidatingAdmissionPolicy (CEL) for simple admission. Checkov/Terrascan for pre-deployment IaC scanning. Make non-compliant deployments technologically impossible.
+- **Why:** AI-generated infrastructure code needs automated guardrails. Compliance requirements (SOC 2, PCI-DSS, HIPAA) are escalating. Manual review doesn't scale. "Governance by default" is becoming a platform engineering baseline.
+- **When:** Any Kubernetes environment, any IaC pipeline, any regulated industry. Start with Kyverno for easy wins (require labels, enforce limits), add OPA for complex logic.
+- **When NOT:** Very early-stage projects with a single developer. But adopt before reaching staging environments.
+- **Source:** [research/2026-02-14-devops-infrastructure-update.md](../research/2026-02-14-devops-infrastructure-update.md)
+
+### eBPF Is the Networking Layer
+- **What:** Cilium (CNCF graduated) replaces iptables with eBPF-powered networking. Hubble provides distributed network observability without sidecars. Tetragon adds kernel-level runtime security enforcement. Operates at L3/4 and L7 (HTTP, gRPC, Kafka).
+- **Why:** 10x+ throughput over iptables. Deep kernel-level visibility without application instrumentation. Replaces sidecar-based service mesh for many observability use cases. Adopted by major cloud providers as default CNI.
+- **When:** Any Kubernetes deployment. Evaluate Cilium as your CNI. Add Tetragon for runtime security beyond container scanning.
+- **When NOT:** Non-Kubernetes environments (eBPF is Linux kernel-level, not applicable to serverless/PaaS).
+- **Source:** [research/2026-02-14-devops-infrastructure-update.md](../research/2026-02-14-devops-infrastructure-update.md)
+
+### OpenTelemetry Is Non-Negotiable
+- **What:** Instrument with OpenTelemetry from day one. OTel provides vendor-neutral APIs and semantic conventions for metrics, logs, traces, and (emerging) profiling. Stay vendor-portable — switch backends without re-instrumenting.
+- **Why:** 39% commit growth in 2025, #2 CNCF project by velocity, contributors grew 35%. De facto standard. Cost fatigue is driving portability — OTel lets you switch from Datadog to open-source (LGTM stack, SigNoz) without rewriting instrumentation.
+- **When:** Every application, from day one. Profiling (~20% adoption) is the emerging 4th signal — adopt if performance-sensitive.
+- **When NOT:** No exceptions. Even simple apps benefit from basic telemetry.
+- **Source:** [research/2026-02-14-devops-infrastructure-update.md](../research/2026-02-14-devops-infrastructure-update.md)
+
+### Watch Wasm, Don't Adopt Broadly
+- **What:** WebAssembly + WASI offers 50x lighter compute than containers with sub-millisecond cold starts. WASI 0.3.0 releasing Feb 2026, 1.0 targeting late 2026. Viable today for edge functions, plugin systems, and lightweight microservices.
+- **Why:** Stronger isolation than containers by default. Language-agnostic sandboxing. But tooling, debugging, and library support aren't mature for general-purpose use yet.
+- **When:** Edge functions, plugin/extension systems, multi-tenant platforms. Track wasmCloud, SpinKube, Fermyon Spin.
+- **When NOT:** General-purpose workloads, complex applications with many dependencies, anything requiring mature debugging tools. Wait for WASI 1.0.
+- **Source:** [research/2026-02-14-devops-infrastructure-update.md](../research/2026-02-14-devops-infrastructure-update.md)
 
 ## Revision History
 - 2026-02-13: Initial extraction from [research/2026-02-13-devops-infrastructure-practices.md](../research/2026-02-13-devops-infrastructure-practices.md).
+- 2026-02-14: Added AI Amplifies, Policy-as-Code, eBPF, OpenTelemetry, Wasm principles. Updated FinOps and Supply Chain Security with new data. Source: [research/2026-02-14-devops-infrastructure-update.md](../research/2026-02-14-devops-infrastructure-update.md).

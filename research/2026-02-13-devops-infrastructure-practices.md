@@ -1,9 +1,10 @@
 ---
 date: 2026-02-13
 topic: DevOps & Infrastructure Best Practices 2026
-status: complete
+status: superseded
 tags: [devops, infrastructure, IaC, ci-cd, containers, kubernetes, deployment, security, observability, platform-engineering, gitops, cloud]
-related: [2026-02-13-backend-api-practices.md, 2026-02-13-frontend-engineering-practices.md]
+related: [2026-02-13-backend-api-practices.md, 2026-02-13-frontend-engineering-practices.md, 2026-02-14-devops-infrastructure-update.md]
+superseded_by: 2026-02-14-devops-infrastructure-update.md
 ---
 
 # DevOps & Infrastructure Best Practices 2026

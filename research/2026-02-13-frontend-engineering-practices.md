@@ -1,7 +1,7 @@
 ---
 date: 2026-02-13
 topic: Frontend Engineering Best Practices 2026
-status: complete
+status: superseded
 tags: [frontend, engineering, architecture, testing, tooling, performance, typescript, react, meta-frameworks, monorepo, ci-cd]
 related: [2026-02-11-frontend-uiux-trends-2026.md]
 ---
