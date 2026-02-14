@@ -1,9 +1,10 @@
 ---
 date: 2026-02-13
 topic: Backend & API Engineering Best Practices 2026
-status: complete
+status: superseded
 tags: [backend, api, typescript, node, frameworks, database, orm, authentication, security, testing, caching, observability, deployment, architecture]
-related: [2026-02-13-frontend-engineering-practices.md]
+related: [2026-02-13-frontend-engineering-practices.md, 2026-02-14-backend-api-practices-update.md]
+superseded_by: 2026-02-14-backend-api-practices-update.md
 ---
 
 # Backend & API Engineering Best Practices 2026
