@@ -202,13 +202,146 @@ Python, TypeScript, React, Django, JavaScript, HTML/CSS, Google Cloud Platform, 
 - Small team = high ownership and direct impact on outcomes
 - Interdisciplinary environment where software directly interfaces with lab hardware and scientific workflows
 
-### Likely technical areas
-- Data pipeline design for scientific/experimental data
-- Lab automation and hardware integration
-- Cloud infrastructure on GCP
-- Python and TypeScript proficiency
-- Collaborating with scientists who aren't software engineers
-- Handling messy, evolving data from experiments
+### Likely technical areas — with project parallels (STAR format)
+
+Each area below maps to Until's needs with concrete examples from your projects.
+
+---
+
+#### 1. Data Pipeline Design for Scientific/Experimental Data
+
+**Best project: Wedding Venue Finder** — 6-stage data pipeline that collects, crawls, extracts, enriches, filters, and embeds venue data. Closest analog to Until's experimental data flows.
+
+- **Situation:** Needed to build a venue recommendation system, but no structured venue dataset existed. Had to create one from raw web data across hundreds of sources.
+- **Task:** Design a multi-stage pipeline that transforms unstructured web content into structured, queryable, vector-embedded data.
+- **Action:** Built a 6-stage pipeline: (1) Collect candidates from OpenStreetMap Overpass API, (2) Pre-vet with keyword checks to filter 40-60% of false positives, (3) BFS web crawl with Playwright via crawl4ai (depth 2-3, rate-limited at 5 concurrent), (4) Extract and download images, (5) Enrich with local LLM (Ollama/phi3) to extract structured fields (pricing, capacity, lodging) from raw markdown, (6) Generate CLIP embeddings (512-dim vectors) for all venue images and store in pgvector. Error logging at each stage so failures don't block the pipeline.
+- **Result:** Transformed ~1000 raw OSM candidates into fully enriched, vector-embedded venue records with structured metadata, images, and taste-matchable embeddings. 223 tests passing.
+
+**Supporting project: Job Search Pipeline** — scrape → normalize → filter → dedup → CRM sync.
+
+- **Situation:** Needed to aggregate job listings from 3 disparate sources (HN, Indeed/JSearch API, Wellfound) into a unified pipeline with personalized filtering.
+- **Task:** Build an automated pipeline that scrapes, normalizes, filters, deduplicates, and syncs qualified leads to a CRM.
+- **Action:** Created abstract BaseScraper with 3 implementations. Normalized all output to Pydantic JobPost models. Built 5 independent YAML-driven filter modules (role, location, company, tech stack, experience). SQLite for dedup + audit trail. CRM sync to EspoCRM via REST API. Dry-run support for previewing without side effects.
+- **Result:** Reduced ~300+ scraped jobs to ~20 high-quality leads per run. Fully testable with 67 tests using respx for HTTP mocking.
+
+**Talking point for Until:** "I've built multi-stage pipelines that transform messy, unstructured data into clean, queryable formats — including vector embeddings. At Until, I'd apply the same patterns to experimental data: ingestion from lab instruments, normalization, enrichment, and storage for analysis."
+
+---
+
+#### 2. Lab Automation and Hardware Integration
+
+**Best project: Knowledge Center** — filesystem monitoring + automated indexing pipeline that reacts to real-time changes and processes them through an ML pipeline.
+
+- **Situation:** Wanted Claude Code to have semantic search over my codebase and notes without manual re-indexing.
+- **Task:** Build a real-time system that detects file changes, chunks content intelligently, generates embeddings, and keeps a vector database in sync.
+- **Action:** Built a Docker Compose service with Watchdog for filesystem monitoring (inotify for native WSL paths, PollingObserver for /mnt/c/). Implemented language-aware text splitting (different chunking strategies for TypeScript, Python, Go, etc. vs. markdown headers). Local SentenceTransformers embeddings (all-MiniLM-L6-v2). ChromaDB for vector storage. Debounced indexing (2-second quiet window) to prevent thrashing. Soft deletes for recovery. Exposed search via MCP (Model Context Protocol) server.
+- **Result:** Fully automated — change a file, and within seconds it's chunked, embedded, and searchable. No manual intervention needed.
+
+**Supporting project: Inbox Zero Agent** — agentic orchestration of multiple services via subprocess management.
+
+- **Situation:** Wanted to automate email unsubscription using AI, but needed to coordinate between Gmail API access and browser automation.
+- **Task:** Build an agent that orchestrates multiple MCP servers (email + browser) as subprocesses, with the agent reasoning about which tool to use.
+- **Action:** Built a three-tier microservice architecture: LangChain/LangGraph ReAct agent as orchestrator, Gmail MCP server for inbox operations, Browser MCP server for unsubscribe link navigation. STDIO-based subprocess management for tight coupling. Async/await throughout.
+- **Result:** Agent can search inbox, identify promotion threads, extract unsubscribe links, and execute browser-based unsubscription — all autonomously.
+
+**Talking point for Until:** "I've built systems that monitor hardware-level events (filesystem changes), process signals through ML pipelines, and keep databases in sync automatically. The pattern maps directly to lab automation — monitoring instruments, processing readings, and maintaining experimental data stores."
+
+---
+
+#### 3. Cloud Infrastructure
+
+**Best project: Wedding Venue Finder** — 5+ containerized services orchestrated with Docker Compose.
+
+- **Situation:** The venue finder required PostgreSQL with PostGIS + pgvector, a web scraper (Playwright), a local LLM (Ollama), a CLIP API server, an Express API, and a React frontend — all needing to communicate.
+- **Task:** Containerize and orchestrate all services so the entire system runs with a single `docker compose up`.
+- **Action:** Built Docker Compose config with 5+ services: PostgreSQL 17 + PostGIS 3.5.3 + pgvector 0.8.0, crawl4ai (Playwright-based scraper), Ollama (local LLM inference), CLIP API server (image embeddings), Express API server, and React frontend. Configured networking, health checks, volume mounts, and environment-based configuration.
+- **Result:** Full system reproducible on any machine with Docker. All services communicate over internal Docker network.
+
+**Supporting project: USDR-GOST** — production government grants platform with Terraform IaC.
+
+- **Situation:** Contributed to a production government grants management tool (US Digital Response) serving state and local officials.
+- **Task:** Work within an established infrastructure-as-code deployment with Terraform, Docker, and staging/production pipelines.
+- **Action:** Contributed to a 1,900+ commit codebase with Terraform-managed infrastructure, Docker deployments, and CI/CD pipelines. Worked within ADR (Architecture Decision Record) conventions and cross-organizational collaboration.
+- **Result:** Production system at grants.usdigitalresponse.org serving government officials.
+
+**Talking point for Until:** "I've designed multi-service Docker architectures from scratch and contributed to production Terraform-managed infrastructure. I'm comfortable with GCP or any cloud — the patterns are the same."
+
+---
+
+#### 4. Python and TypeScript Proficiency
+
+**Python projects:**
+- **Job Search Pipeline** — Pydantic models, async httpx, Playwright browser automation, SQLite, pytest with respx mocking, Typer CLI
+- **Knowledge Center** — Watchdog, SentenceTransformers, ChromaDB, LangChain text splitters, Docker, pytest (57+ tests)
+- **Inbox Zero Agent** — LangChain/LangGraph, MCP servers, async subprocess management
+- **Atropos** (contributor) — FastAPI, Pydantic, PyTorch, vLLM, distributed RL training
+
+**TypeScript projects:**
+- **Wedding Venue Finder** — Express 5, PostgreSQL with pgvector + PostGIS, Knex migrations, JWT auth, CLIP integration, Vitest (223 tests)
+- **Dashboard** — Express 5, React 19, multi-source data aggregation, Docker Compose
+- **OmniSync** — React 18, Express, PostgreSQL, Docker Compose
+
+**Talking point for Until:** "I'm equally productive in Python and TypeScript. I use Python for data pipelines, ML, and automation. TypeScript for APIs, frontend, and full-stack apps. Both are in Until's stack."
+
+---
+
+#### 5. Collaborating with Non-Engineers
+
+**Best project: USDR-GOST** — building tools for government officials who are not technical.
+
+- **Situation:** US Digital Response builds tools for state and local government officials managing federal grants — users who are not software engineers.
+- **Task:** Contribute to a grants management platform that must be intuitive for non-technical users handling compliance reporting.
+- **Action:** Worked within a large cross-organizational team, following ADR conventions and contribution guidelines. The tool (ARPA Reporter) handles American Rescue Plan Act compliance — a domain where the end users are policy people, not engineers.
+- **Result:** Production tool serving government officials nationwide.
+
+**Supporting project: Wedding Venue Finder** — designed for a non-technical end user (partner).
+
+- **Situation:** Building a venue discovery tool where the user has no technical background.
+- **Task:** Design a UX that abstracts away the ML complexity — the user just swipes and gets recommendations.
+- **Action:** Built a swipe-based onboarding (10 images), auto-generated taste profile (5 descriptive words), and search results ranked by taste similarity. All ML (CLIP embeddings, cosine similarity, profile learning) is invisible to the user.
+- **Result:** Non-technical user sees "Modern, Elegant, Garden, Romantic, Minimalist" and venues ranked by match — no ML jargon exposed.
+
+**Talking point for Until:** "At Until, software serves scientists and surgeons. I've built tools for government officials and non-technical users — the key is understanding their workflow, not just the code. I'd bring the same approach to building interfaces for Until's lab teams."
+
+---
+
+#### 6. Handling Messy, Evolving Data
+
+**Best project: Job Search Pipeline** — parsing unstructured text into structured data.
+
+- **Situation:** HN "Who's Hiring" posts are freeform text comments — no consistent format for company name, role, location, or tech stack.
+- **Task:** Extract structured job data from completely unstructured text across 3 different source formats.
+- **Action:** Built regex + keyword matching to extract company names, titles, locations, and tech stacks from freeform HN comments. Built a hardcoded list of 45+ technologies for stack extraction. Normalized all sources to a single Pydantic model (JobPost). Added experience-level parsing that handles "X years", "junior/mid/senior" text patterns.
+- **Result:** Reliably extracts structured data from messy, inconsistent sources. YAML-driven filters can be adjusted without code changes as requirements evolve.
+
+**Supporting project: Wedding Venue Finder** — LLM enrichment of raw web content.
+
+- **Situation:** Crawled venue websites produce raw markdown — inconsistent formats, missing fields, variable quality.
+- **Task:** Extract structured metadata (pricing tier, capacity, lodging, venue type) from raw unstructured web content.
+- **Action:** Used local Ollama LLM (phi3) to parse raw markdown and extract structured fields. Built error handling so individual enrichment failures don't block the pipeline. Pre-vetting stage filters 40-60% of irrelevant results before expensive processing.
+- **Result:** Transforms raw, messy web content into clean structured records with categorical fields for filtering and search.
+
+**Talking point for Until:** "Scientific data is messy by nature — experiments produce variable outputs, formats evolve, and edge cases are the norm. I've built pipelines that handle exactly this: unstructured inputs → normalization → structured storage, with error isolation so one bad record doesn't break the system."
+
+---
+
+#### 7. ML/AI Systems (Bonus — relevant given Adit's background)
+
+**Best project: Wedding Venue Finder** — CLIP embeddings + vector similarity + real-time learning.
+
+- **Situation:** Needed to match users to venues by aesthetic preference — not just metadata filters.
+- **Task:** Build a taste-matching system using image embeddings and vector similarity.
+- **Action:** Integrated CLIP (ViT-B/32) for 512-dimensional image embeddings. Stored in pgvector for fast cosine similarity search. Built real-time profile learning: each right-swipe pulls the user's embedding centroid 10% toward the venue (learning rate 0.1). Computed confidence scores from standard deviation of liked-image similarities. Matched profiles to 14 aesthetic word embeddings to generate human-readable taste descriptors.
+- **Result:** Users get personalized venue rankings from just 10 swipes. Profile evolves with continued interaction.
+
+**Supporting project: Atropos** — contributed to a mature RL training framework.
+
+- **Situation:** Nous Research needed a framework for training LLMs with reinforcement learning across diverse environments.
+- **Task:** Contribute to a decoupled architecture where environment rollouts and policy updates run asynchronously.
+- **Action:** Worked within a FastAPI + Pydantic microservices architecture. Environment workers generate LLM trajectories asynchronously. Central trajectory API manages batching. Trainers pull batches for policy updates (DPO, SFT, PPO). Supports SLURM for HPC, W&B for monitoring.
+- **Result:** Framework achieved 4.6x improvement on parallel tool-calling tasks. Used to train DeepHermes-ToolCalling-Specialist.
+
+**Talking point for Until:** "I've worked with embedding models, vector databases, and RL training frameworks. Adit's background is in ML research — I can speak his language when discussing how ML applies to cryopreservation data, whether that's molecular discovery, imaging analysis, or experimental optimization."
 
 ### Questions to ask them
 1. "What does the day-to-day look like for software engineers — how closely do you work with the science team?"
