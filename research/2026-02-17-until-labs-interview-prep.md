@@ -111,6 +111,84 @@ Python, TypeScript, React, Django, JavaScript, HTML/CSS, Google Cloud Platform, 
 - **In-office** in San Francisco
 - **Unconventional credentials welcome** — founders value genuine intellectual obsession over pedigree
 
+## Interviewer: Adit Shah
+
+**Role at Until:** Software + ML Research Engineer
+**Twitter/X:** [@aditshah00](https://x.com/aditshah00)
+**GitHub:** [ashah03](https://github.com/ashah03)
+**Personal site:** [aditshah.com](https://aditshah.com/)
+
+### Background
+
+- **Education:** UC Berkeley, dual degree in EECS and Business Administration through the MET (Management, Entrepreneurship, and Technology) program — a highly selective program combining engineering and business
+- **Graduated:** ~2025 (class of 2025)
+- Previous research at EPFL (Switzerland), Broad Institute (MIT/Harvard), and BAIR (Berkeley AI Research)
+- Led Neurotech@Berkeley — a student org of ~30 students at the intersection of neuroscience and AI
+
+### Research Experience
+
+**Berkeley Speech Group** (Jan 2022 – Aug 2023)
+- Undergraduate researcher advised by Prof. Gopala Anumanchipalli
+- Developed a speech neuroprosthesis to enable communication for paralyzed individuals using brain-computer interfaces
+- Anumanchipalli's lab later published significant BCI-to-speech results in Nature Neuroscience (2025)
+
+**BAIR / CIRCLES Consortium** (Jan 2022 – Aug 2023)
+- Advised by Prof. Alexandre Bayen
+- Developed deep RL algorithm (Proximal Policy Optimization) for autonomous vehicles to smooth traffic and reduce fuel consumption by >15%
+- **Deployed to 100 vehicles on a live freeway in Nashville, TN** (Nov 2022) — the largest open-track traffic experiment of its kind
+- Co-first author on paper at IEEE International Conference on Intelligent Transportation Systems (2023)
+
+**EPFL, Summer@EPFL** (May – Aug 2023)
+- Visiting research fellow (<1.5% acceptance rate)
+- Machine Learning for Biomedical Discovery Lab, advised by Prof. Maria Brbic
+- Built modular benchmarking platform for few-shot learning algorithms applied to single-cell biology
+- Applications: predicting cancer drug performance, bacterial strain analysis
+
+### Technical Profile
+
+| Area | Details |
+|---|---|
+| Languages | Python, Kotlin, Java, MATLAB |
+| ML | Deep RL (PPO), few-shot learning, neural signal processing |
+| Domains | Neuroscience/BCI, autonomous vehicles, computational biology, single-cell analysis |
+| Systems | Multi-agent simulations, robotics (ROS, UR5), data pipelines |
+| Style | Research-oriented, builds benchmarking platforms and simulation tools |
+
+### Notable Projects (GitHub)
+
+- **agent-sim** — Multi-agent distributed system testing platform (Kotlin) with communication APIs and visualization
+- **CIRCLES traffic deployment** — RL algorithm deployed on live I-24 highway with 100 autonomous vehicles
+- **ur5-ros** — ROS integration with Universal Robots UR5 arm for pick-and-place using object detection
+- **alzheimers-facial-recognition** — Won 2nd place at ACSEF 2016 (high school project)
+- **Virufy** — ML models for COVID-19 diagnosis from cough audio for a non-profit
+
+### What This Tells You About The Interview
+
+**He's technical and research-heavy.** Expect questions that probe:
+- Your understanding of ML concepts and systems thinking
+- How you approach ambiguous, research-oriented problems (not just product engineering)
+- Data pipeline and experimental data management
+- Ability to build tools that scientists use
+
+**He values real-world impact.** His research consistently bridges theory to deployment — BCI for paralyzed patients, autonomous vehicles on live highways, cancer drug prediction. He'll likely care about whether you think about impact, not just clean code.
+
+**He's young and recently transitioned from academia to industry.** He graduated ~2025, so he's early career himself. This means:
+- The interview may be more collaborative/conversational than hierarchical
+- He'll likely appreciate intellectual curiosity and honest engagement over polished answers
+- You can have a peer-level conversation about building at the intersection of ML and science
+
+**Common ground to find:**
+- If you have any experience with data pipelines, ML systems, or scientific computing, emphasize it
+- His Kotlin multi-agent simulation and Python ML work suggest he cares about well-designed systems, not just notebooks
+- Ask about what he's working on at Until — his background spans BCI, RL, and computational biology, so his role there likely touches ML applied to cryopreservation data
+
+### Interviewer-Specific Questions to Ask
+
+1. "How did you go from BCI and autonomous vehicles research to cryopreservation — what drew you to Until?"
+2. "What does ML look like applied to cryopreservation? Is it more on the molecular discovery side, the imaging/assessment side, or something else?"
+3. "You built benchmarking platforms at EPFL — does Until have similar infrastructure for evaluating experimental results?"
+4. "What's the balance between research engineering and production engineering on the software team?"
+
 ## Interview Strategy
 
 ### "Why Until?"
@@ -166,3 +244,9 @@ Your referrer is a former founding engineer. Before the interview:
 - [Laura Deming — Wikipedia](https://en.wikipedia.org/wiki/Laura_Deming)
 - [Organ Donation Statistics — organdonor.gov](https://www.organdonor.gov/learn/organ-donation-statistics)
 - [Hunter Davis — Crunchbase](https://www.crunchbase.com/person/hunter-davis-525b)
+- [Adit Shah — Personal Site](https://aditshah.com/)
+- [Adit Shah — GitHub](https://github.com/ashah03)
+- [Adit Shah — X/Twitter](https://x.com/aditshah00)
+- [Adit Shah — Resume (PDF)](https://aditshah.com/assets/files/resume.pdf)
+- [CIRCLES Traffic Smoothing Paper — arXiv](https://arxiv.org/abs/2401.09666)
+- [BAIR Blog — RL AV Traffic Smoothing](https://bair.berkeley.edu/blog/2025/03/25/rl-av-smoothing/)
