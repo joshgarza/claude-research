@@ -1,0 +1,78 @@
+{
+  "items": [
+    {
+      "id": "q-20260218-001",
+      "topic": "Real-time & Event-Driven Architecture",
+      "description": "WebSocket vs SSE vs polling decision framework, event sourcing, CQRS, pub/sub design, eventual consistency in UI.",
+      "tags": [
+        "websockets",
+        "sse",
+        "event-sourcing",
+        "cqrs",
+        "pub-sub"
+      ],
+      "priority": 1,
+      "status": "completed",
+      "added": "2026-02-18T20:00:00Z",
+      "attempts": 1,
+      "maxAttempts": 2,
+      "model": "sonnet",
+      "started": "2026-02-19T07:03:53.034Z",
+      "completed": "2026-02-19T07:12:06.072Z",
+      "outputFile": "research/2026-02-19-real-time-event-driven-architecture.md"
+    },
+    {
+      "id": "q-20260218-002",
+      "topic": "Migration & Legacy Modernization",
+      "description": "Strangler fig pattern, parallel old/new systems, data migration at scale, feature parity tracking.",
+      "tags": [
+        "migration",
+        "strangler-fig",
+        "modernization",
+        "data-migration"
+      ],
+      "priority": 2,
+      "status": "queued",
+      "added": "2026-02-18T20:00:00Z",
+      "attempts": 0,
+      "maxAttempts": 2,
+      "model": "sonnet"
+    },
+    {
+      "id": "q-20260218-003",
+      "topic": "Team & Process Practices",
+      "description": "Code review standards, ADRs, technical debt tracking, on-call from the dev side, documentation standards.",
+      "tags": [
+        "code-review",
+        "adrs",
+        "tech-debt",
+        "on-call",
+        "documentation"
+      ],
+      "priority": 3,
+      "status": "queued",
+      "added": "2026-02-18T20:00:00Z",
+      "attempts": 0,
+      "maxAttempts": 2,
+      "model": "sonnet"
+    },
+    {
+      "id": "q-20260218-004",
+      "topic": "Search, Analytics & Product Observability",
+      "description": "Full-text search (Meilisearch/Typesense vs Elasticsearch), event tracking architecture, A/B testing infrastructure, business metrics dashboards.",
+      "tags": [
+        "search",
+        "analytics",
+        "observability",
+        "a-b-testing",
+        "meilisearch"
+      ],
+      "priority": 4,
+      "status": "queued",
+      "added": "2026-02-18T20:00:00Z",
+      "attempts": 0,
+      "maxAttempts": 2,
+      "model": "sonnet"
+    }
+  ]
+}

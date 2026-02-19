@@ -1,0 +1,27 @@
+{
+  "name": "research",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "worker": "node --experimental-strip-types automation/worker.ts",
+    "enqueue": "node --experimental-strip-types automation/enqueue.ts",
+    "status": "node --experimental-strip-types automation/status.ts",
+    "digest": "node --experimental-strip-types automation/digest.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joshgarza/claude-research.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/joshgarza/claude-research/issues"
+  },
+  "homepage": "https://github.com/joshgarza/claude-research#readme",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.77.0"
+  }
+}
