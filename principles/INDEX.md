@@ -22,3 +22,4 @@
 - **migration-legacy-modernization.md** — Strangler Fig, parallel systems (shadow/canary/dark launch), CDC data migration, feature parity trap, seam identification, ACL, leave-and-layer
 - **team-process-practices.md** — Code review standards (PR size, turnaround, culture), ADRs (when/templates/storage), technical debt (Fowler quadrant, SonarQube/CodeScene, allocation), on-call (rotation, runbooks, postmortems), documentation (Diátaxis, docs-as-code)
 - **search-analytics-observability.md** — Search engine selection (Typesense/Meilisearch/Elasticsearch), event taxonomy (Object-Action naming), hybrid tracking, PostHog as SMB default, A/B testing (CUPED + sequential testing), warehouse as single source of truth, OTel business metrics
+- **vlm-basics.md** — VLM architecture (ViT encoder + projector + LLM), CLIP/SigLIP foundations, three-stage training, token budget, hallucination, model selection by use case
