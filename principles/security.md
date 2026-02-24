@@ -112,6 +112,13 @@ Holistic security guidance for TypeScript/Node.js applications, filling gaps not
 - **When:** Every project, from first commit. Pre-commit hook blocks secrets locally; CI gate catches anything that slips through.
 - **Source:** [research/2026-02-24-appsec-security-tooling-uses-in-agentic-engineering.md](../research/2026-02-24-appsec-security-tooling-uses-in-agentic-engineering.md)
 
+### Use AI Security Scanning for Discovery, Deterministic Tools for Enforcement
+- **What:** Add AI-native code scanning (Claude Code Security, GitHub Copilot Autofix) as a periodic *discovery* layer — for finding novel, context-dependent vulnerabilities traditional SAST misses. Keep deterministic rule-based tools (Semgrep, CodeQL) as the *enforcement* layer in CI/CD. The four-layer model: (1) pre-generation context, (2) Semgrep MCP in-flow, (3) CI deterministic gates, (4) periodic AI deep-scan for zero-day discovery, (5) DAST runtime. Do not replace Semgrep/CodeQL with Claude Code Security.
+- **Why:** AI-native scanners found 500+ long-undetected vulnerabilities in major open-source projects (Ghostscript, OpenSC, CGIF) that rule-based tools missed. But they have high false positive rates (~86% in benchmarks) and cannot detect runtime/business logic bugs. Deterministic tools enforce at scale with low noise; AI tools find what's unknown. Neither replaces the other.
+- **When:** Enterprise/Team Claude customers and open-source maintainers — apply for access to the limited preview. Run AI scans periodically (weekly or before major releases), not on every commit. Always validate findings with runtime testing before prioritizing remediation.
+- **Source:** [research/2026-02-24-claude-released-static-cofe-analysis.md](../research/2026-02-24-claude-released-static-cofe-analysis.md), [Anthropic Claude Code Security](https://www.anthropic.com/news/claude-code-security)
+
 ## Revision History
 - 2026-02-14: Initial extraction from [research/2026-02-14-security-practices.md](../research/2026-02-14-security-practices.md).
 - 2026-02-24: Added 5 agentic code security principles from [research/2026-02-24-appsec-security-tooling-uses-in-agentic-engineering.md](../research/2026-02-24-appsec-security-tooling-uses-in-agentic-engineering.md).
+- 2026-02-24: Added AI security scanning discovery principle from [research/2026-02-24-claude-released-static-cofe-analysis.md](../research/2026-02-24-claude-released-static-cofe-analysis.md).
