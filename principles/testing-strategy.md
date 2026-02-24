@@ -66,5 +66,36 @@ Opinionated testing strategy for TypeScript/Node.js full-stack projects. Follows
 - **When:** Any project with LLM integrations. Start with Layer 1 immediately, add Layer 2 as quality matters, Layer 3 for agents.
 - **Source:** [research/2026-02-14-testing-strategy.md](../research/2026-02-14-testing-strategy.md)
 
+### Seed Your PRNG for Reproducible Randomized Tests
+
+- **What:** Any randomized test (fuzz test, property test, chaos scenario) must: (1) seed a PRNG at the start, (2) route all random decisions through that PRNG, (3) log the seed on failure. Never use `Math.random()` or `crypto.randomBytes()` inside a test scenario — use the seeded PRNG.
+- **Why:** Seed-based reproducibility transforms "I can't reproduce it" into "run it again with seed X." This is the minimum viable version of deterministic fault injection — low cost, high value.
+- **When:** Any test involving randomness: property-based tests, randomized workload generators, fault injection. Applies in TypeScript (`fast-check` manages seeds automatically), Rust, Go, etc.
+- **When NOT:** Pure unit tests with no randomness don't need this.
+- **Source:** [research/2026-02-24-determinisitic-fault-injection.md](../research/2026-02-24-determinisitic-fault-injection.md)
+
+### Deterministic Fault Injection for Reliability-Critical Systems
+
+- **What:** For systems with durability or consistency guarantees, inject faults deterministically via: (a) a simulated VFS/network layer controlled by a seeded PRNG, (b) BUGGIFY-style production annotations that only fire in simulation, or (c) a deterministic hypervisor (Antithesis). Run millions of seeds in CI. Treat any failing seed as a blocker.
+- **Why:** FoundationDB had ~1 production bug ever. Dropbox runs tens of millions of seeds nightly. WarpStream found a microsecond-wide data loss race in 1 hour that 10,000 hours of standard testing never caught. Combinatorial failures (network + disk + process crash simultaneously) are nearly impossible to exercise without simulation.
+- **When:** Systems making durability/consistency guarantees — databases, financial ledgers, sync engines, distributed storage. Worth the investment when failure modes are combinatorial and user-visible correctness matters.
+- **When NOT:** Stateless API layers, simple CRUD services with no durability semantics. Overkill when standard integration testing covers your failure modes.
+- **Source:** [research/2026-02-24-determinisitic-fault-injection.md](../research/2026-02-24-determinisitic-fault-injection.md)
+
+### Cooperative Fault Injection (BUGGIFY Pattern)
+
+- **What:** Annotate production code with fault injection hooks that only fire in simulation (`if (BUGGIFY) { throw IOError() }`). Keep them in the production binary — they're dead code outside simulation. Per-run: each site is enabled or disabled once at start; enabled sites fire with 25% probability per evaluation. After N simulated seconds, reduce fault frequency to allow recovery.
+- **Why:** Black-box fault injection can only target the system boundary. BUGGIFY targets specific code paths with calibrated probabilities, reaches code that external faults never exercise, and keeps fault injection code under the same review discipline as production code.
+- **When:** Any system already investing in DST. Trivial to add to existing code. Start with wrapping rare error returns: `if (unlikely_condition || BUGGIFY) { handle_error(); }`.
+- **Source:** [research/2026-02-24-determinisitic-fault-injection.md](../research/2026-02-24-determinisitic-fault-injection.md)
+
+### Separate Safety and Liveness Testing
+
+- **What:** Run two distinct simulation modes. Safety mode: inject faults uniformly at random, verify invariants are never violated (no data loss, no stale reads after acknowledged writes). Liveness mode: after establishing a fault scenario, freeze additional faults and verify the system eventually makes progress. These are different properties requiring different test designs.
+- **Why:** Safety faults alone never reveal liveness bugs. TigerBeetle's liveness split found a resonance deadlock that 100% safety testing never surfaced — faults in safety mode would eventually "accidentally" resolve what the liveness mode held fixed.
+- **When:** Distributed systems with consensus or replication. If you only test one, test safety first — data loss is worse than being slow.
+- **Source:** [research/2026-02-24-determinisitic-fault-injection.md](../research/2026-02-24-determinisitic-fault-injection.md)
+
 ## Revision History
 - 2026-02-14: Initial extraction from [research/2026-02-14-testing-strategy.md](../research/2026-02-14-testing-strategy.md).
+- 2026-02-24: Added 4 deterministic fault injection principles from [research/2026-02-24-determinisitic-fault-injection.md](../research/2026-02-24-determinisitic-fault-injection.md).
