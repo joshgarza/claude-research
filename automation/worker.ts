@@ -159,9 +159,10 @@ function processItem(item: QueueItem, queue: Queue): void {
   const durationMs = Date.now() - startTime;
   const durationSec = (durationMs / 1000).toFixed(1);
 
-  // Check for permission-related issues in output
-  const permissionPatterns = /permission|not allowed|denied|unauthorized|disallowed/i;
-  const outputHasPermissionIssue = permissionPatterns.test(claudeOutput) || permissionPatterns.test(claudeStderr);
+  // Check for permission-related issues in stderr only (not claudeOutput, which contains
+  // research content that may legitimately discuss permissions/auth topics)
+  const permissionPatterns = /tool.*not allowed|permission denied|unauthorized.*tool|disallowed.*tool/i;
+  const outputHasPermissionIssue = permissionPatterns.test(claudeStderr);
   if (outputHasPermissionIssue) {
     log("WARN", item.id, "Possible permission issue detected in Claude output — check detailed log");
   }
