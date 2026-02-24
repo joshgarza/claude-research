@@ -1,0 +1,21 @@
+# Principles Index
+
+- **frontend-engineering.md** — Meta-frameworks, RSC, state management, tooling (Vite, pnpm, Turborepo), TypeScript, CSS
+- **backend-api-engineering.md** — Hono/Fastify, tRPC, Zod validation, auth (passkeys), caching, observability, MCP/A2A
+- **database-data-architecture.md** — PostgreSQL as default, schema design, indexing, connection pooling, migrations, edge DBs
+- **devops-infrastructure.md** — IaC, CI/CD, containers, GitOps, platform engineering, supply chain security, observability
+- **testing-strategy.md** — Testing Trophy (integration-heavy), Vitest, Playwright, Testcontainers, contract testing, k6
+- **security.md** — OWASP Top 10 mapped to TypeScript/Node.js, rate limiting, CSP, auth patterns, dependency management, agentic code security (3-layer enforcement, Semgrep MCP, secret detection)
+- **error-handling-resilience.md** — Error taxonomy, circuit breakers, retries, timeouts, graceful degradation, health checks
+- **performance-scalability.md** — Profiling (Clinic.js), event loop, V8 memory, caching, load balancing, scaling decisions
+- **accessibility.md** — WCAG 2.2, semantic HTML, keyboard nav, automated testing (axe-core), screen readers, design systems
+- **ai-llm-integration.md** — LLM architecture patterns, Vercel AI SDK, evaluation, cost optimization, guardrails, multi-model
+- **api-versioning-evolution.md** — Versioning strategies, backwards compatibility, OpenAPI from Zod, SDK generation, deprecation
+- **data-privacy-compliance.md** — GDPR/CCPA implementation, PII encryption, consent, data retention, deletion, cross-border
+- **integration-patterns.md** — External system integration, messaging platforms, subprocess RPC, real-time streams
+- **ai-tool-adoption.md** — Team training, enterprise rollout, spec-first workflow, pair prompting, senior-junior asymmetry, metrics
+- **engineering-sources.md** — Where to find high-quality sources by stack layer (T1/T2/T3 ranking)
+- **real-time-event-driven.md** — SSE vs WebSocket, event sourcing, CQRS, outbox pattern, broker selection
+- **recommendation-engine.md** — Multi-vector venues, taste clustering, MaxSim scoring, cold start, conversational search
+- **agent-task-orchestration.md** — Swarm patterns, ticket decomposition, Claude Code Teams, event-driven pipelines
+- **agent-context-augmentation.md** — Context file design (CLAUDE.md/AGENTS.md/Skills), 150-line rule, evidence-based augmentation

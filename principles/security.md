@@ -1,7 +1,7 @@
 # Security Principles
 
 ## Summary
-Holistic security guidance for TypeScript/Node.js applications, filling gaps not covered by other principle files. Covers OWASP mapping, rate limiting, CORS, CSP, security headers, encryption, authorization patterns, JWT pitfalls, dependency vulnerability management, secure coding, and security testing. Security principles in other files remain authoritative for their domains.
+Holistic security guidance for TypeScript/Node.js applications, filling gaps not covered by other principle files. Covers OWASP mapping, rate limiting, CORS, CSP, security headers, encryption, authorization patterns, JWT pitfalls, dependency vulnerability management, secure coding, security testing, and securing AI-agent-generated code. Security principles in other files remain authoritative for their domains.
 
 ## Related Principles (in other files)
 - **frontend-engineering.md:** npm supply chain hygiene, server action security, React security patching
@@ -82,5 +82,36 @@ Holistic security guidance for TypeScript/Node.js applications, filling gaps not
 - **When:** Before first production deploy. Review quarterly.
 - **Source:** [research/2026-02-14-security-practices.md](../research/2026-02-14-security-practices.md)
 
+### Three-Layer Security for Agentic Code
+- **What:** Secure AI-agent-generated code at three enforcement points: (1) **Pre-generation** — inject security context via CLAUDE.md instructions, OWASP skill (claude-code-owasp), and OpenSSF-recommended concrete rules (not "act as security expert"). (2) **In-flow scanning** — Semgrep MCP server for agent self-audit, Cursor hooks for deterministic enforcement on file edits. (3) **CI/CD gates** — Semgrep/Opengrep SAST, Bearer data flow analysis, Gitleaks secret detection, Trivy SCA, OWASP ZAP DAST.
+- **Why:** ~25-40% of AI-generated code contains vulnerabilities. Single-layer security is insufficient because agents skip optional checks, pre-commit misses real-time feedback, and CI catches issues too late. Three layers provide defense-in-depth matching the velocity of agentic code generation.
+- **When:** Every project using AI coding agents (Claude Code, Cursor, Copilot). Layer 1 (pre-generation context) takes 10 minutes. Layer 2 (Semgrep MCP) takes 5 minutes. Layer 3 (CI) is standard DevSecOps.
+- **Source:** [research/2026-02-24-appsec-security-tooling-uses-in-agentic-engineering.md](../research/2026-02-24-appsec-security-tooling-uses-in-agentic-engineering.md)
+
+### Deterministic Enforcement Over Prompt-Based Security
+- **What:** Security scanning must run via system infrastructure (hooks, CI gates, MCP tool calls) — not via prompt instructions that agents can ignore or misapply. Cursor `afterFileEdit` hooks triggering Semgrep are the gold standard: the agent cannot skip the check. In Claude Code, use the Semgrep MCP server as the closest equivalent (agent-invoked but at least available). Never rely solely on "please check for security issues" instructions.
+- **Why:** Research shows the "persona pattern" (telling AI to act as a security expert) actually *increases* vulnerabilities. Prompts are suggestions; hooks are guarantees. Security that depends on agent discretion will be skipped under time pressure or complex tasks.
+- **When:** Always. Start with Semgrep MCP server (5-minute setup), graduate to Cursor hooks or equivalent when available.
+- **Source:** [research/2026-02-24-appsec-security-tooling-uses-in-agentic-engineering.md](../research/2026-02-24-appsec-security-tooling-uses-in-agentic-engineering.md), [OpenSSF Guide](https://best.openssf.org/Security-Focused-Guide-for-AI-Code-Assistant-Instructions)
+
+### Treat AI-Generated Code as Untrusted
+- **What:** All AI-generated code must pass the same rigor as third-party dependencies: automated SAST scanning, peer review, and sandbox testing before production. Specific AI failure modes to watch for: hardcoded secrets (~70% prevalence), permissive CORS, package hallucination (19.7% of suggested packages don't exist), deprecated crypto patterns, missing input validation. Use RCI (Recursive Criticism and Improvement) — ask the agent to review its own output for vulnerabilities, then improve — which reduces weaknesses by ~10x.
+- **Why:** AI agents reproduce vulnerability patterns from training data reliably and at scale. They don't understand security implications — they pattern-match. The code looks correct and compiles, making vulnerabilities harder to spot in review.
+- **When:** Every AI-generated code change. Build the scanning pipeline once; it runs automatically forever.
+- **Source:** [research/2026-02-24-appsec-security-tooling-uses-in-agentic-engineering.md](../research/2026-02-24-appsec-security-tooling-uses-in-agentic-engineering.md), [OpenSSF Guide](https://best.openssf.org/Security-Focused-Guide-for-AI-Code-Assistant-Instructions)
+
+### Semgrep MCP as Minimum Agentic Security Integration
+- **What:** Install the Semgrep MCP server (`uvx semgrep-mcp`) in every AI coding agent setup. Provides `security_check`, `semgrep_scan`, and custom rule scanning directly in the agent's tool palette. Free open-source engine, 30+ languages, 2,000+ rules, millisecond-per-file speed. For fully open-source: use Opengrep (LGPL-2.1 fork with taint analysis and inter-procedural scanning).
+- **Why:** Lowest-friction, highest-coverage free security integration for agentic workflows. The agent can self-audit before presenting code. Combined with OWASP Top 10 + TypeScript rule packs, it catches the most common AI-generated vulnerability patterns.
+- **When:** Every project using AI coding agents. 5-minute setup. Add to MCP config once; available in every session.
+- **Source:** [research/2026-02-24-appsec-security-tooling-uses-in-agentic-engineering.md](../research/2026-02-24-appsec-security-tooling-uses-in-agentic-engineering.md), [Semgrep MCP](https://github.com/semgrep/mcp)
+
+### Secret Detection is Non-Negotiable for AI Workflows
+- **What:** Run Gitleaks or TruffleHog as both pre-commit hooks and CI gates. AI agents hallucinate and hardcode secrets (API keys, DB strings, JWT secrets) at high rates — this is the single most common AI-generated vulnerability. TruffleHog adds live verification (checks if detected secrets are active). Use both: Gitleaks for speed in pre-commit, TruffleHog for verification in CI.
+- **Why:** A leaked secret in a public repo is exploited in minutes. AI agents don't understand the difference between placeholder and real credentials, and they reproduce credential patterns from training data. Secret detection is the highest-ROI security check for AI-generated code.
+- **When:** Every project, from first commit. Pre-commit hook blocks secrets locally; CI gate catches anything that slips through.
+- **Source:** [research/2026-02-24-appsec-security-tooling-uses-in-agentic-engineering.md](../research/2026-02-24-appsec-security-tooling-uses-in-agentic-engineering.md)
+
 ## Revision History
 - 2026-02-14: Initial extraction from [research/2026-02-14-security-practices.md](../research/2026-02-14-security-practices.md).
+- 2026-02-24: Added 5 agentic code security principles from [research/2026-02-24-appsec-security-tooling-uses-in-agentic-engineering.md](../research/2026-02-24-appsec-security-tooling-uses-in-agentic-engineering.md).
