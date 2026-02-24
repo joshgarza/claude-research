@@ -78,5 +78,30 @@ Principles for training developers and teams on AI coding tools (Claude Code, Cu
 - **When:** Enterprise rollouts. Smaller teams can compress timelines but should still follow the sequence. Select champions who are respected by peers, not just enthusiasts.
 - **Source:** research/2026-02-15-ai-coding-team-training.md (Faros AI Launch-Learn-Run, GitLab, Coder.com)
 
+### Code Health is a Prerequisite, Not an Output
+- **What:** Verify that target code achieves a high Code Health score (CodeScene threshold: 9.5+) _before_ deploying AI agents to modify it. Refactor unhealthy code first, then use agents.
+- **Why:** Peer-reviewed research (Borg & Tornhill, FORGE 2026, arxiv:2601.02200) shows AI coding assistants increase defect risk by 30%+ when applied to unhealthy code. Agents amplify existing problems — poor-quality code confuses AI the same way it confuses humans. Initial velocity gains are "fully cancelled out after two months" due to accumulated complexity.
+- **When:** Always. Before assigning an agent to a module or file, check code quality signals first. The loveholidays case study demonstrates this works at organizational scale: 0→50% agent-assisted code in 5 months while maintaining quality — but only after adding guardrails.
+- **Source:** research/2026-02-24-research-this-site.md (CodeScene, arxiv:2601.02200)
+
+### Three-Tier Quality Gates for Agent Output
+- **What:** Enforce code quality at three sequential points: (1) continuous feedback during generation, (2) pre-commit checks on staged files, (3) PR pre-flight analysis comparing branches against baseline. No single gate is sufficient.
+- **Why:** Defense-in-depth — each gate catches different failure modes. Continuous catches problems early before they compound. Pre-commit enforces standards at the developer loop. PR pre-flight catches systemic regressions. The speed of agent output makes any manual verification process a bottleneck — all three gates must be automated.
+- **When:** Any team using AI agents for code generation. Implement before scaling up agent usage. The CodeScene MCP server provides Code Health analysis as AI-accessible tools to enable the continuous feedback tier.
+- **Source:** research/2026-02-24-research-this-site.md (CodeScene inner developer loop, MCP server)
+
+### Objective Metrics Over Vague Workflow Instructions
+- **What:** When encoding quality gates in AGENTS.md/CLAUDE.md, use objective, measurable criteria (Code Health ≥ 9.5, coverage ≥ 80%) rather than vague instructions ("write maintainable code," "ensure good test coverage"). Measurable workflow gates are the exception to the minimal-context-file rule.
+- **Why:** LLMs interpret vague instructions inconsistently. "Write maintainable code" means nothing operationally. "Trigger refactoring loop if Code Health drops below 9.0" is unambiguous and produces consistent behavior. The reconciliation with the minimal-context-file research: vague conventions are harmful, but specific measurable workflow gates produce quantifiable quality improvement.
+- **When:** Any AGENTS.md that includes quality guidance. Replace all vague quality adjectives with specific thresholds. If you can't measure it, don't encode it — encode the tool + measurement approach instead.
+- **Source:** research/2026-02-24-research-this-site.md (CodeScene AGENTS.md pattern)
+
+### Human Tests, Agent Code — Never the Reverse
+- **What:** AI agents should generate implementation code, not tests. Human-written tests provide the essential double-bookkeeping that validates agent output. Use automated coverage enforcement (e.g., 99% threshold) to prevent agents from deleting tests instead of fixing the underlying failures.
+- **Why:** AI can generate both buggy code and a test that passes the buggy code — defeating the entire purpose of testing. CodeScene research specifically identifies "negating logic, removing keywords, inverting conditions" as AI error patterns that only human-written tests reliably catch. Agents also have a documented tendency to delete failing tests as a shortcut.
+- **When:** Always. Coverage gates enforce compliance mechanically — if tests are deleted, coverage drops and the gate fails. This converts a probabilistic instruction ("don't delete tests") into a deterministic constraint.
+- **Source:** research/2026-02-24-research-this-site.md (CodeScene guardrails research, principle: human tests as protection layer)
+
 ## Revision History
 - 2026-02-15: Initial extraction from AI coding team training research session. 12 principles from 8+ sources.
+- 2026-02-24: Added 4 principles from CodeScene agentic AI patterns research: code health prerequisite, three-tier quality gates, objective metrics in AGENTS.md, human tests over AI tests. (12→16 principles)
