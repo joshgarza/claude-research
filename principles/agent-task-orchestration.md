@@ -78,5 +78,24 @@ Principles for coordinating AI agents through shared task systems — from flat 
 - **When:** At project start and whenever the coordination needs change. Migrate up (flat → structured → external) as complexity warrants.
 - **Source:** research/2026-02-23-ai-agent-ticket-orchestration.md (comparative analysis across all tools)
 
+### Mechanical Enforcement Over Prompt Enforcement
+- **What:** Use `PreToolUse` hooks to enforce agent role constraints (e.g., blocking file writes for read-only agents), not instructions in prompts. Hooks are deterministic; prompts are probabilistic.
+- **Why:** A Scout agent instructed in its prompt not to write files will occasionally write files anyway — especially when it hallucinates task scope. A `PreToolUse` hook that returns an error on `Write` or `Edit` tool calls is absolute. Overstory demonstrates this: Scouts and Reviewers are mechanically blocked from file modifications regardless of what their task context says.
+- **When:** Any multi-agent system where role separation matters. Apply broadly: block dangerous git operations for non-Merger agents, block file writes for research agents, block network access for sandboxed workers. If you care about a constraint, enforce it mechanically.
+- **Source:** research/2026-02-24-overstory.md (Overstory PreToolUse hooks design)
+
+### Two-Layer Agent Instructions (HOW + WHAT)
+- **What:** Separate agent instructions into a reusable base definition (the HOW: workflow, constraints, capabilities) and a per-task overlay (the WHAT: task ID, file scope, spec path, branch). Generate the overlay at spawn time from the task spec.
+- **Why:** Reusing base definitions across all instances of a given agent type reduces instruction drift and makes updates centralized. The overlay keeps each agent's assignment concrete and injected rather than inferred. Overstory implements this cleanly: `agents/builder.md` defines how a builder works; `overstory sling` generates the per-task `CLAUDE.md` overlay with the specific assignment.
+- **When:** Any system with multiple instances of the same agent type. Also useful for single-agent systems where you want separation between "how this agent works" (stable) and "what it's doing right now" (task-specific).
+- **Source:** research/2026-02-24-overstory.md (Overstory two-layer instruction system)
+
+### WAL Mode Is Mandatory for Concurrent SQLite
+- **What:** Any system where multiple processes access shared SQLite databases must enable WAL mode and set a busy timeout.
+- **Why:** Default SQLite journal mode causes write lock contention — concurrent agents pile up on lock attempts, causing failures or indefinite blocking. WAL mode enables concurrent readers and one writer, dramatically reducing contention. Overstory specifies this as a hard convention: `db.exec("PRAGMA journal_mode=WAL"); db.exec("PRAGMA busy_timeout=5000");`.
+- **When:** Any multi-agent system using SQLite for coordination (mail, task queue, merge queue, metrics). Also applies to any server-side SQLite use (Turso, Bun built-in, better-sqlite3) where multiple connections might write concurrently.
+- **Source:** research/2026-02-24-overstory.md (Overstory SQLite conventions), research/2026-02-14-database-data-architecture.md (SQLite/Turso edge patterns)
+
 ## Revision History
 - 2026-02-23: Initial extraction from AI agent ticket orchestration research session. 11 principles from 15+ sources.
+- 2026-02-24: Added 3 principles from Overstory deep-dive: mechanical enforcement, two-layer instructions, WAL mode. (11→14 principles)
