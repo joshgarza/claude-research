@@ -19,3 +19,4 @@
 - **recommendation-engine.md** — Multi-vector venues, taste clustering, MaxSim scoring, cold start, conversational search
 - **agent-task-orchestration.md** — Swarm patterns, ticket decomposition, Claude Code Teams, event-driven pipelines
 - **agent-context-augmentation.md** — Context file design (CLAUDE.md/AGENTS.md/Skills), 150-line rule, evidence-based augmentation
+- **migration-legacy-modernization.md** — Strangler Fig, parallel systems (shadow/canary/dark launch), CDC data migration, feature parity trap, seam identification, ACL, leave-and-layer
