@@ -96,5 +96,30 @@ Engineering excellence requires shared operational practices across five pillars
 - **When:** All services. Minimum structure: README, architecture overview, ADRs, runbooks, API docs (auto-generated from schema where possible). Review critical runbooks quarterly.
 - **Source:** [research/2026-02-24-team-process-practices.md](../research/2026-02-24-team-process-practices.md); Swimm, DX, Atlassian
 
+### Five Whys: "Human Error" Is Never a Root Cause
+- **What:** Never accept "an operator/engineer forgot to do X" as the terminal answer in a Five Whys chain. That describes what happened, not why the system allowed it. The next question must be: "Why didn't the process catch this before it reached that person?" Robust systems assume humans make mistakes and build in safeguards.
+- **Why:** Stopping at human error produces countermeasures like "be more careful" — which fail. Systemic countermeasures (null-safety linting, required checklists, automated verification) actually prevent recurrence.
+- **When:** Every incident postmortem and retrospective root cause analysis. Apply until you reach a systemic gap you can close with a concrete process or tooling change.
+- **Source:** [research/2026-02-24-five-whys.md](../research/2026-02-24-five-whys.md); FlowFuse, MindTools
+
+### Stop at Countermeasures, Not Symptoms — The Countermeasure Test
+- **What:** You've found the root cause when you can state: "If we implement change X, this specific failure mode cannot recur." If you cannot name that change, dig deeper. The distinction between a "solution" (fixes the symptom) and a "countermeasure" (closes the systemic gap) is critical.
+- **Why:** Symptom-fixing generates recurring incidents. Countermeasures eliminate failure modes. Teams that confuse the two spend cycles re-investigating the same problems.
+- **When:** After any Five Whys analysis, before closing the investigation. Enforce as a quality gate on postmortem action items.
+- **Source:** [research/2026-02-24-five-whys.md](../research/2026-02-24-five-whys.md); MindTools, FlowFuse
+
+### Use Fishbone + Five Whys for Complex Failures
+- **What:** For incidents with multiple plausible cause categories, start with a Fishbone (Ishikawa) diagram to map all possible branches across categories (e.g., code, process, tooling, communication). Then apply Five Whys independently to the 2–3 highest-probability branches. Compare results to identify the most actionable leverage points.
+- **Why:** Five Whys alone follows a single causal chain, which misses complex system failures where multiple factors cooperate. The Fishbone step prevents premature convergence on one thread.
+- **When:** Major incidents, novel failure modes, and any situation where there are clearly multiple contributing cause categories. Skip for simple, clearly linear failures.
+- **Source:** [research/2026-02-24-five-whys.md](../research/2026-02-24-five-whys.md); Visual Paradigm, Salesforce Engineering
+
+### Complex Incidents Need "How" Not Just "Why"
+- **What:** For distributed system failures, replace "Why did this happen?" with "How did this system fail?" The word "why" implies a single cause and invites blame; "how" opens investigation to the full network of jointly cooperating factors (per Dr. Richard Cook: each factor is necessary but insufficient alone). Build a cause map showing relationships, then identify leverage points.
+- **Why:** Complex systems never fail for a single reason. Forcing a Five Whys linear chain on a complex incident produces an arbitrarily selected "root cause" that reflects the investigator's bias (WYLFIWYF: What You Look For Is What You Find), not the full failure mode.
+- **When:** P0/P1 incidents in distributed systems, any incident where "human error" appears to be the proximate cause, and postmortems where multiple teams or systems were involved.
+- **Source:** [research/2026-02-24-five-whys.md](../research/2026-02-24-five-whys.md); Salesforce Engineering (Robert Blumen), Dr. Richard Cook
+
 ## Revision History
 - 2026-02-24: Initial extraction from research/2026-02-24-team-process-practices.md.
+- 2026-02-24: Added 4 Five Whys principles from research/2026-02-24-five-whys.md.
