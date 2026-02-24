@@ -20,3 +20,4 @@
 - **agent-task-orchestration.md** — Swarm patterns, ticket decomposition, Claude Code Teams, event-driven pipelines
 - **agent-context-augmentation.md** — Context file design (CLAUDE.md/AGENTS.md/Skills), 150-line rule, evidence-based augmentation
 - **migration-legacy-modernization.md** — Strangler Fig, parallel systems (shadow/canary/dark launch), CDC data migration, feature parity trap, seam identification, ACL, leave-and-layer
+- **team-process-practices.md** — Code review standards (PR size, turnaround, culture), ADRs (when/templates/storage), technical debt (Fowler quadrant, SonarQube/CodeScene, allocation), on-call (rotation, runbooks, postmortems), documentation (Diátaxis, docs-as-code)
