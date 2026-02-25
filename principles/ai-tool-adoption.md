@@ -102,6 +102,37 @@ Principles for training developers and teams on AI coding tools (Claude Code, Cu
 - **When:** Always. Coverage gates enforce compliance mechanically — if tests are deleted, coverage drops and the gate fails. This converts a probabilistic instruction ("don't delete tests") into a deterministic constraint.
 - **Source:** research/2026-02-24-research-this-site.md (CodeScene guardrails research, principle: human tests as protection layer)
 
+### Spec-Driven Development Is the Validated Methodology
+- **What:** Use the SDD pattern for all non-trivial AI-assisted development: (1) Have The Conversation — explain problem, propose approaches without coding; (2) Convert to Spec — document agreed approach; (3) Break into atomic tasks with clear done criteria; (4) Execute one task at a time. "Writing code is always the last step."
+- **Why:** Independent convergence from Obong (Airbnb), Osmani (Google), Thoughtworks, AWS Kiro, Boris Cherny (Claude Code team), and Faros AI enterprise data — all arriving at the same pattern without coordination. The alternative ("magic wand" prompting) consistently produces constant refactors, doom loops, and complexity failures.
+- **When:** Every task beyond trivial one-liners. Especially important for large codebases, multi-service features, and any code with security implications.
+- **Source:** research/2026-02-25-opinion-piece-on-llms-in-production.md (Obong, Osmani, Thoughtworks, AWS Kiro)
+
+### Treat Context Windows as an Engineering Constraint
+- **What:** Compact context at ~20% remaining capacity. Write handoff documents (progress summary, goals, remaining tasks) before compacting or switching sessions. Decompose tasks so each fits within a single context window. Degraded context = increased hallucinations, not just lower quality.
+- **Why:** LLMs don't "remember" — they re-read the entire conversation history on each call. As conversations grow, inference costs rise and hallucination rate increases. Compaction and decomposition prevent the doom loop where a model with degraded context repeatedly fails to fix the same bug.
+- **When:** Any session expected to exceed ~50 turns, or any task involving a large codebase. Use /compact or equivalent before context drops below 20%.
+- **Source:** research/2026-02-25-opinion-piece-on-llms-in-production.md (Obong; context engineering patterns)
+
+### Security Is a Systematic Gap in SDD
+- **What:** No spec-driven development framework currently addresses the 45% AI-generated code vulnerability rate (Veracode 2025: 100+ LLMs, 80 security tasks). XSS and log injection failures occur in 86-88% of cases. Java: 72% failure rate. Treat SAST (Semgrep, CodeQL) as mandatory for any AI-generated code touching security-sensitive paths.
+- **Why:** SDD produces functionally correct and structurally clean code but does not inherently address security. A well-spec'd, AI-generated authentication module may still have injection vulnerabilities. Security requires systematic tooling, not just good prompts.
+- **When:** Always for production code. Integrate SAST into the CI gate that runs on every AI-assisted commit. Add security-specific review criteria to specs for auth, payments, and data-access code.
+- **Source:** research/2026-02-25-opinion-piece-on-llms-in-production.md (Veracode 2025 GenAI Code Security Report)
+
+### Comprehension Debt Is the Long-Term Risk
+- **What:** "Comprehension debt" is code produced faster than engineers can understand it. When teams accept AI-generated code they have reviewed but don't deeply understand, debugging time increases, maintenance becomes harder, on-call incidents worsen, and knowledge doesn't transfer when engineers leave. Enforce "never commit code you can't explain" as a hard rule, not a guideline.
+- **Why:** Velocity metrics don't capture comprehension debt. 80% of code written by early AI adopters in late 2025 was AI-generated; engineers reported increasing difficulty modifying and maintaining it. The debt compounds: code review of code you don't understand is security theater.
+- **When:** Always. Especially important during rapid AI-assisted feature development cycles where review time is under pressure. The rule must be enforced by culture and process, not just stated in a coding standards doc.
+- **Source:** research/2026-02-25-opinion-piece-on-llms-in-production.md (Codemanship, LeadDev, Hacker News comprehension debt thread)
+
+### Team-Scale Productivity Requires Shared Infrastructure
+- **What:** Individual SDD productivity does not automatically compound into team velocity. The AI Productivity Paradox (Faros AI, 10K+ devs): 98% more PRs without proportional review capacity creates downstream bottleneck. Invest equally in: (1) shared CLAUDE.md / AGENTS.md evolving as team knowledge base, (2) AI-assisted code review to handle review volume increase, (3) standardized spec templates to prevent workflow divergence.
+- **Why:** Most companies lack shared agentic workflows, creating isolated individual gains. The individual benefit of AI assistance can be fully offset by review bottleneck at the team level — individual coding speed gains without review infrastructure produce no net delivery improvement.
+- **When:** Any team of 3+ developers using AI-assisted development. Address before, not after, scaling AI usage.
+- **Source:** research/2026-02-25-opinion-piece-on-llms-in-production.md (Faros AI paradox, Bored Hacking org gap analysis)
+
 ## Revision History
 - 2026-02-15: Initial extraction from AI coding team training research session. 12 principles from 8+ sources.
 - 2026-02-24: Added 4 principles from CodeScene agentic AI patterns research: code health prerequisite, three-tier quality gates, objective metrics in AGENTS.md, human tests over AI tests. (12→16 principles)
+- 2026-02-25: Added 5 principles from Obong SDD analysis + broader field synthesis: SDD methodology, context window management, security gap, comprehension debt, team-scale infrastructure. (16→21 principles)
