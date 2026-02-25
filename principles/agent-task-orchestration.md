@@ -96,6 +96,31 @@ Principles for coordinating AI agents through shared task systems — from flat 
 - **When:** Any multi-agent system using SQLite for coordination (mail, task queue, merge queue, metrics). Also applies to any server-side SQLite use (Turso, Bun built-in, better-sqlite3) where multiple connections might write concurrently.
 - **Source:** research/2026-02-24-overstory.md (Overstory SQLite conventions), research/2026-02-14-database-data-architecture.md (SQLite/Turso edge patterns)
 
+### Bounded Worker Pool Over Unbounded Spawning
+- **What:** Never use `Promise.all(tasks.map(spawn))` for agent tasks. Always use a semaphore, BullMQ `concurrency` setting, or equivalent to cap the number of concurrently running agents. For Claude Code agents (CPU-intensive), cap at `num_cpu_cores` (typically 1–2 on a dev machine, 4–8 in CI). For I/O-heavy tasks within agents, this still applies — the agent process itself is CPU-bound due to LLM inference.
+- **Why:** Each Claude Code agent forks a subprocess, loads 200K+ tokens of context, and makes concurrent API calls. Unbounded spawning causes CPU saturation, memory exhaustion, and cascading API rate limit failures (HTTP 429). The OS cannot schedule more concurrent work than cores; excess agents context-switch, wasting cycles.
+- **When:** Always. There is no safe scenario for unbounded concurrent agent spawning. The minimum viable implementation is an in-process semaphore (10 lines of code). Graduate to BullMQ when tasks need persistence across crashes.
+- **Source:** research/2026-02-25-queue-for-agent-orchestration.md (BullMQ docs, ferd.ca overload handling, multi-agent rate limits playbook)
+
+### Token Bucket as Default API Rate Limit Strategy
+- **What:** Use a token bucket algorithm as the primary throttle for Anthropic API calls in multi-agent systems. Seed the bucket with burst capacity (e.g., 10 requests), refill at a sustained rate (e.g., 0.5 req/sec for Build tier). Track `anthropic-ratelimit-requests-remaining` and `anthropic-ratelimit-tokens-remaining` headers; throttle proactively when remaining < 10%. Add exponential backoff with jitter for 429 responses.
+- **Why:** Token bucket allows bursts without over-applying rate limits, while providing smooth sustained throttling. Alternatives: sequential execution (safe but 2x slower) and adaptive concurrency (self-optimizing but complex to implement correctly). Proper rate limiting prevents ~40% API cost waste from failed retries.
+- **When:** Any system making concurrent Anthropic API calls. The three strategies by scale: token bucket (10–50 agents), adaptive concurrency (50+ agents), sequential with 1.2s delays (trivial scripts). Circuit breaker (cockatiel library) as the fallback after 5 consecutive 429s — halt all requests for 60 seconds.
+- **Source:** research/2026-02-25-queue-for-agent-orchestration.md (claudecodeplugins.io multi-agent rate limits playbook)
+
+### BullMQ → Temporal Graduation Path for Agent Queues
+- **What:** Use a three-phase graduation path for agent task queues: (1) in-process semaphore for single-process, ephemeral tasks; (2) BullMQ + Redis for persistent, multi-process, or multi-machine coordination; (3) Temporal or Trigger.dev for long-running, multi-step workflows that require crash-safe state. Skip levels only when requirements clearly demand it.
+- **Why:** Each level adds operational complexity and infrastructure requirements. BullMQ needs Redis but no cluster. Temporal needs a cluster but provides Event History (crash-safe intermediate state). Inngest/Trigger.dev are managed alternatives to Temporal with better TypeScript DX but add external service dependencies. For Anthropic Batch API integration, Temporal's durable polling loop (24hr activity timeout + 5 retries) eliminates the need to manually persist batch IDs.
+- **When:** Start at Level 1 (semaphore) for any new system. Move to Level 2 (BullMQ) when tasks need to persist across process restarts or multiple workers. Move to Level 3 (Temporal/Trigger.dev) when tasks run > 15 minutes, require multi-step coordination, or span multiple domains/repos with complex dependencies.
+- **Source:** research/2026-02-25-queue-for-agent-orchestration.md (BullMQ docs, Temporal AI SDK blog, Trigger.dev deep dive, Inngest blog)
+
+### Domain-Partitioned Queues for Cross-Repo Agent Systems
+- **What:** When agents operate across multiple repositories or domains, use separate queues per domain (e.g., `research-tasks`, `code-tasks`, `review-tasks`). Each queue has its own concurrency limit, retry policy, and worker pool. Workers specialize by domain. A shared Redis instance coordinates all queues with zero inter-queue dependency.
+- **Why:** Unified queues create priority inversion: a burst of low-priority research tasks can delay high-priority code tasks. Domain-partitioned queues allow independent rate limiting (research may call Anthropic at 0.5 req/sec; code tasks may call GitHub at 10 req/sec). They also enforce file ownership naturally — a research worker never touches code files.
+- **When:** Any system where agents span more than one project type or have meaningfully different resource profiles. Also required when different domains have different SLAs (interactive code tasks should not queue-starve behind batch research tasks).
+- **Source:** research/2026-02-25-queue-for-agent-orchestration.md
+
 ## Revision History
 - 2026-02-23: Initial extraction from AI agent ticket orchestration research session. 11 principles from 15+ sources.
 - 2026-02-24: Added 3 principles from Overstory deep-dive: mechanical enforcement, two-layer instructions, WAL mode. (11→14 principles)
+- 2026-02-25: Added 4 principles from queue/concurrency research: bounded worker pool, token bucket, graduation path, domain-partitioned queues. (14→18 principles)
