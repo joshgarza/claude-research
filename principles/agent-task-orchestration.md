@@ -120,7 +120,32 @@ Principles for coordinating AI agents through shared task systems — from flat 
 - **When:** Any system where agents span more than one project type or have meaningfully different resource profiles. Also required when different domains have different SLAs (interactive code tasks should not queue-starve behind batch research tasks).
 - **Source:** research/2026-02-25-queue-for-agent-orchestration.md
 
+### Harness Selection Determines Augmentation Effectiveness
+- **What:** The agent scaffolding/harness architecture determines whether context augmentation (Skills, context files, tool definitions) is utilized at all. The SkillsBench paper (arXiv:2602.12670) found Claude Code consistently uses provided Skills (+13.9pp to +23.3pp), while Codex CLI frequently ignores them despite acknowledging they exist. Same model, same Skills, different harness = different results.
+- **Why:** Different harnesses incorporate context into agent decision-making differently. The harness controls which parts of context the model attends to, how tool calls are structured, and whether Skills are referenced during planning. These are architectural decisions that compound.
+- **When:** When evaluating or selecting augmentation strategies (Skills, CLAUDE.md context, tool definitions), always test across the specific harness you'll deploy on. A strategy that works in one harness may be silently ignored in another.
+- **Source:** research/2026-02-25-agent-harnesses.md (SkillsBench benchmark, arXiv:2602.12670)
+
+### Fewer General-Purpose Tools Over Many Specialized Tools
+- **What:** Prefer 2-5 general-purpose tools (bash, file read/write, search) over 10-50 specialized tools. Vercel reduced from 15 specialized tools to 2 general-purpose ones — accuracy improved from 80% to 100%, token usage dropped 37%, execution time improved 3.5x.
+- **Why:** More tools fragment context and increase decision complexity. The model must choose from a larger action space, and each unused tool description still occupies context space. Atomic tools like bash subsume specialized tools without the fragmentation cost.
+- **When:** Always. Start with the smallest possible tool set (bash + file access covers most agentic tasks). Add specialized tools only when atomic tools demonstrably can't handle a use case. Never add tools "in case they're useful."
+- **Source:** research/2026-02-25-agent-harnesses.md (Vercel case study, Manus context engineering blog, Lance Martin / Hugo Bowne-Anderson)
+
+### Externalize Session State for Long-Running Agents
+- **What:** Agents working across multiple sessions must write their progress to external artifacts (TODO.md, progress files, git commits) that allow cold-start rehydration. Never rely on in-context memory alone for tasks that span sessions. Anthropic's pattern: an Initializer Agent creates a 200+ feature spec with all items marked "failing"; a Coder Agent reads, completes the next step, and updates before exiting.
+- **Why:** The core challenge of long-running agents is that each new session starts with no memory of what came before. "The most reliable agents are those that leave behind clear, externally legible artifacts." Agents observed sustaining 30+ hours of operation (Claude Agent SDK) do so via automatic context compaction + external progress state — neither alone is sufficient.
+- **When:** Any agent task expected to take more than one context window of work. The minimum viable implementation: a `claude-progress.txt` file updated at session end. For complex tasks: a structured TODO with completion status per feature/step.
+- **Source:** research/2026-02-25-agent-harnesses.md (Anthropic Claude Agent SDK docs, Anthropic engineering blog on effective harnesses)
+
+### Harness Must Evolve With Model Capabilities
+- **What:** Periodically audit and remove scaffolding from your harness that models no longer need. Capabilities requiring complex pipelines in 2024 (multi-step reasoning decomposition, explicit chain-of-thought structures, rigid tool-call sequences) may be handled natively by a single 2026 prompt. Manus rebuilt their harness five times in six months, each time removing user-facing complexity.
+- **Why:** Over-engineered harnesses add latency, tokens, and failure surface for problems that no longer exist. Worse, explicit structural scaffolding can constrain models that would otherwise perform better with more autonomy. The harness should shrink as models grow.
+- **When:** After any significant model upgrade. Run A/B tests comparing the current harness structure against a simplified version. If the simpler version performs equally or better, ship the simplification.
+- **Source:** research/2026-02-25-agent-harnesses.md (Manus context engineering, LangChain harness taxonomy, Philschmid agent harness 2026)
+
 ## Revision History
 - 2026-02-23: Initial extraction from AI agent ticket orchestration research session. 11 principles from 15+ sources.
 - 2026-02-24: Added 3 principles from Overstory deep-dive: mechanical enforcement, two-layer instructions, WAL mode. (11→14 principles)
 - 2026-02-25: Added 4 principles from queue/concurrency research: bounded worker pool, token bucket, graduation path, domain-partitioned queues. (14→18 principles)
+- 2026-02-25: Added 4 principles from agent harnesses research: harness determines augmentation effectiveness, fewer general-purpose tools, externalize session state, harness must evolve with models. (18→22 principles)
