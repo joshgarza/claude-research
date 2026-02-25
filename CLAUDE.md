@@ -2,6 +2,24 @@
 
 A process-oriented research repository where Claude agents conduct research sessions, accumulate findings, distill principles, and iteratively improve their own workflows. Everything starts and ends with this file.
 
+## Linear
+- Team: `JOS`
+- Project: `claude-research`
+
+## CLI
+
+All commands via:
+```bash
+node --experimental-strip-types /home/josh/coding/claude/task-runner/main/src/cli.ts <command>
+```
+
+```bash
+<cli> add-ticket "Title" --team JOS --project claude-research [--description "Details"]
+<cli> run JOS-42
+<cli> review <pr-url>
+<cli> standup --project claude-research
+```
+
 ## File Structure
 
 ```
