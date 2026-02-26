@@ -32,11 +32,14 @@
         "data-migration"
       ],
       "priority": 2,
-      "status": "queued",
+      "status": "completed",
       "added": "2026-02-18T20:00:00Z",
-      "attempts": 0,
+      "attempts": 1,
       "maxAttempts": 2,
-      "model": "sonnet"
+      "model": "sonnet",
+      "started": "2026-02-24T22:00:01.633Z",
+      "completed": "2026-02-24T22:07:45.385Z",
+      "outputFile": "research/2026-02-24-migration-legacy-modernization.md"
     },
     {
       "id": "q-20260218-003",
@@ -50,11 +53,14 @@
         "documentation"
       ],
       "priority": 3,
-      "status": "queued",
+      "status": "completed",
       "added": "2026-02-18T20:00:00Z",
-      "attempts": 0,
+      "attempts": 2,
       "maxAttempts": 2,
-      "model": "sonnet"
+      "model": "sonnet",
+      "started": "2026-02-24T22:24:17.729Z",
+      "completed": "2026-02-24T22:32:19.388Z",
+      "outputFile": "research/2026-02-24-team-process-practices.md"
     },
     {
       "id": "q-20260218-004",
@@ -68,11 +74,14 @@
         "meilisearch"
       ],
       "priority": 4,
-      "status": "queued",
+      "status": "completed",
       "added": "2026-02-18T20:00:00Z",
-      "attempts": 0,
+      "attempts": 1,
       "maxAttempts": 2,
-      "model": "sonnet"
+      "model": "sonnet",
+      "started": "2026-02-24T22:38:22.166Z",
+      "completed": "2026-02-24T22:44:44.010Z",
+      "outputFile": "research/2026-02-24-search-analytics-product-observability.md"
     },
     {
       "id": "q-20260219-224",
@@ -80,11 +89,14 @@
       "description": "This was brought up in an interview at a game development conpany called Refactor Games",
       "tags": [],
       "priority": 3,
-      "status": "queued",
+      "status": "completed",
       "added": "2026-02-19T08:58:25.568Z",
-      "attempts": 0,
+      "attempts": 1,
       "maxAttempts": 2,
-      "model": "opus"
+      "model": "opus",
+      "started": "2026-02-24T22:32:20.297Z",
+      "completed": "2026-02-24T22:38:21.369Z",
+      "outputFile": "research/2026-02-24-gamelift.md"
     },
     {
       "id": "q-20260219-261",
@@ -92,11 +104,14 @@
       "description": "It’s a github repo that is a project agnostic agent swarm",
       "tags": [],
       "priority": 2,
-      "status": "queued",
+      "status": "completed",
       "added": "2026-02-19T09:03:32.027Z",
-      "attempts": 0,
+      "attempts": 1,
       "maxAttempts": 2,
-      "model": "sonnet"
+      "model": "sonnet",
+      "started": "2026-02-24T22:07:46.338Z",
+      "completed": "2026-02-24T22:14:16.165Z",
+      "outputFile": "research/2026-02-24-overstory.md"
     },
     {
       "id": "q-20260219-777",
@@ -119,11 +134,14 @@
       "description": "I want to understand how VLMs work",
       "tags": [],
       "priority": 5,
-      "status": "queued",
+      "status": "completed",
       "added": "2026-02-19T09:07:11.378Z",
-      "attempts": 0,
+      "attempts": 1,
       "maxAttempts": 2,
-      "model": "sonnet"
+      "model": "sonnet",
+      "started": "2026-02-24T22:44:44.861Z",
+      "completed": "2026-02-24T22:50:39.178Z",
+      "outputFile": "research/2026-02-24-vlm-basics.md"
     },
     {
       "id": "q-20260220-708",
@@ -131,11 +149,14 @@
       "description": "https://codescene.com/blog/agentic-ai-coding-best-practice-patterns-for-speed-with-quality",
       "tags": [],
       "priority": 5,
-      "status": "queued",
+      "status": "completed",
       "added": "2026-02-20T22:49:39.540Z",
-      "attempts": 0,
+      "attempts": 2,
       "maxAttempts": 2,
-      "model": "sonnet"
+      "model": "sonnet",
+      "started": "2026-02-24T22:50:40.064Z",
+      "completed": "2026-02-24T22:54:58.737Z",
+      "outputFile": "research/2026-02-24-research-this-site.md"
     },
     {
       "id": "q-20260221-855",
@@ -143,11 +164,14 @@
       "description": "I saw that engineers in the 90s could fit massive storage on little cassettes. I’m interested in exploring the edges around what might be possible or practical about using this tech. What are the pros and cons or is it just a gimmick?",
       "tags": [],
       "priority": 5,
-      "status": "queued",
+      "status": "completed",
       "added": "2026-02-21T00:23:46.523Z",
-      "attempts": 0,
+      "attempts": 1,
       "maxAttempts": 2,
-      "model": "sonnet"
+      "model": "sonnet",
+      "started": "2026-02-24T22:55:42.754Z",
+      "completed": "2026-02-24T23:01:05.274Z",
+      "outputFile": "research/2026-02-24-dds-data-cartridge-as-a-lofi-backup-option.md"
     },
     {
       "id": "q-20260221-585",
@@ -155,11 +179,14 @@
       "description": "Five whys",
       "tags": [],
       "priority": 5,
-      "status": "queued",
+      "status": "completed",
       "added": "2026-02-21T01:32:04.854Z",
-      "attempts": 0,
+      "attempts": 1,
       "maxAttempts": 2,
-      "model": "sonnet"
+      "model": "sonnet",
+      "started": "2026-02-24T23:01:06.136Z",
+      "completed": "2026-02-24T23:06:47.257Z",
+      "outputFile": "research/2026-02-24-five-whys.md"
     },
     {
       "id": "q-20260222-115",
@@ -167,11 +194,14 @@
       "description": "Claude released static cofe analysis",
       "tags": [],
       "priority": 5,
-      "status": "queued",
+      "status": "completed",
       "added": "2026-02-22T03:48:12.356Z",
-      "attempts": 0,
+      "attempts": 1,
       "maxAttempts": 2,
-      "model": "sonnet"
+      "model": "sonnet",
+      "started": "2026-02-24T23:06:48.581Z",
+      "completed": "2026-02-24T23:10:56.699Z",
+      "outputFile": "research/2026-02-24-claude-released-static-cofe-analysis.md"
     },
     {
       "id": "q-20260222-346",
@@ -179,11 +209,14 @@
       "description": "https://zeropath.com/?gad_source=1&gad_campaignid=23038586553&gclid=CjwKCAiAzOXMBhASEiwAe14SaQldywEudpVF6g_9_ERHBehIXpCGD0TyjXiUVau4MYRBw6BnUoT98BoCarMQAvD_BwE",
       "tags": [],
       "priority": 5,
-      "status": "queued",
+      "status": "completed",
       "added": "2026-02-22T04:04:17.373Z",
-      "attempts": 0,
+      "attempts": 1,
       "maxAttempts": 2,
-      "model": "sonnet"
+      "model": "sonnet",
+      "started": "2026-02-24T23:10:57.641Z",
+      "completed": "2026-02-24T23:15:19.795Z",
+      "outputFile": "research/2026-02-24-zeropath.md"
     },
     {
       "id": "q-20260222-470",
@@ -191,11 +224,14 @@
       "description": "Resolve.ai",
       "tags": [],
       "priority": 5,
-      "status": "queued",
+      "status": "completed",
       "added": "2026-02-22T04:07:07.654Z",
-      "attempts": 0,
+      "attempts": 1,
       "maxAttempts": 2,
-      "model": "sonnet"
+      "model": "sonnet",
+      "started": "2026-02-24T23:15:20.888Z",
+      "completed": "2026-02-24T23:18:41.773Z",
+      "outputFile": "research/2026-02-24-resolve-ai.md"
     },
     {
       "id": "q-20260222-683",
@@ -203,11 +239,14 @@
       "description": "La pavoni",
       "tags": [],
       "priority": 5,
-      "status": "queued",
+      "status": "completed",
       "added": "2026-02-22T04:36:30.564Z",
-      "attempts": 0,
+      "attempts": 1,
       "maxAttempts": 2,
-      "model": "sonnet"
+      "model": "sonnet",
+      "started": "2026-02-24T23:18:42.533Z",
+      "completed": "2026-02-24T23:22:08.721Z",
+      "outputFile": "research/2026-02-24-la-pavoni.md"
     },
     {
       "id": "q-20260223-846",
@@ -215,11 +254,14 @@
       "description": "this error has occurred twice on my PC and should be researched thoroughly. the output should be a testable fix to this issue",
       "tags": [],
       "priority": 5,
-      "status": "queued",
+      "status": "completed",
       "added": "2026-02-23T20:50:30.285Z",
-      "attempts": 0,
+      "attempts": 1,
       "maxAttempts": 2,
-      "model": "sonnet"
+      "model": "sonnet",
+      "started": "2026-02-24T23:22:09.511Z",
+      "completed": "2026-02-24T23:25:45.418Z",
+      "outputFile": "research/2026-02-24-blue-screen-of-death-faulty-hardware-corrupted-page.md"
     },
     {
       "id": "q-20260223-030",
@@ -227,11 +269,14 @@
       "description": "Look into it as a potential switch from the default WSL terminal I'm currently using.",
       "tags": [],
       "priority": 5,
-      "status": "queued",
+      "status": "completed",
       "added": "2026-02-23T20:51:13.998Z",
-      "attempts": 0,
+      "attempts": 1,
       "maxAttempts": 2,
-      "model": "sonnet"
+      "model": "sonnet",
+      "started": "2026-02-24T23:25:46.615Z",
+      "completed": "2026-02-24T23:29:30.740Z",
+      "outputFile": "research/2026-02-24-wezterm.md"
     },
     {
       "id": "q-20260224-727",
@@ -239,11 +284,14 @@
       "description": "Frievalds Algorithm",
       "tags": [],
       "priority": 5,
-      "status": "queued",
+      "status": "completed",
       "added": "2026-02-24T01:28:14.415Z",
-      "attempts": 0,
+      "attempts": 1,
       "maxAttempts": 2,
-      "model": "sonnet"
+      "model": "sonnet",
+      "started": "2026-02-24T23:29:31.511Z",
+      "completed": "2026-02-24T23:34:00.875Z",
+      "outputFile": "research/2026-02-24-frievalds-algorithm.md"
     },
     {
       "id": "q-20260224-685",
@@ -251,11 +299,119 @@
       "description": "Dropbox sync engine is an example of this and there’s a blog post. Tigerbeetle is another resource to pull. Sqlite testing does soemthing similar",
       "tags": [],
       "priority": 5,
-      "status": "queued",
+      "status": "completed",
       "added": "2026-02-24T01:48:22.926Z",
-      "attempts": 0,
+      "attempts": 1,
       "maxAttempts": 2,
-      "model": "sonnet"
+      "model": "sonnet",
+      "started": "2026-02-24T23:34:01.676Z",
+      "completed": "2026-02-24T23:38:50.856Z",
+      "outputFile": "research/2026-02-24-determinisitic-fault-injection.md"
+    },
+    {
+      "id": "q-20260225-858",
+      "topic": "Queue for agent orchestration",
+      "description": "In a high volume agent system, it’s possible to spawn more agents than the cpu can manage. We will need a queue for tasks that span across repos and domains so that we don’t overload our cpu",
+      "tags": [],
+      "priority": 5,
+      "status": "completed",
+      "added": "2026-02-25T04:55:41.086Z",
+      "attempts": 1,
+      "maxAttempts": 2,
+      "model": "sonnet",
+      "started": "2026-02-25T06:00:04.007Z",
+      "completed": "2026-02-25T06:06:26.571Z",
+      "outputFile": "research/2026-02-25-queue-for-agent-orchestration.md"
+    },
+    {
+      "id": "q-20260225-893",
+      "topic": "Agent harnesses",
+      "description": "What are they and how are they utilized?",
+      "tags": [],
+      "priority": 5,
+      "status": "completed",
+      "added": "2026-02-25T09:23:13.998Z",
+      "attempts": 1,
+      "maxAttempts": 2,
+      "model": "sonnet",
+      "started": "2026-02-25T10:00:04.558Z",
+      "completed": "2026-02-25T10:05:32.096Z",
+      "outputFile": "research/2026-02-25-agent-harnesses.md"
+    },
+    {
+      "id": "q-20260225-530",
+      "topic": "Opinion piece on LLMs in production",
+      "description": "https://www.linkedin.com/pulse/writing-high-quality-production-code-llms-solved-problem-esco-obong-odx7f?utm_source=share&utm_medium=member_ios&utm_campaign=share_via",
+      "tags": [],
+      "priority": 5,
+      "status": "completed",
+      "added": "2026-02-25T18:22:18.971Z",
+      "attempts": 1,
+      "maxAttempts": 2,
+      "model": "sonnet",
+      "started": "2026-02-25T20:00:05.699Z",
+      "completed": "2026-02-25T20:05:44.111Z",
+      "outputFile": "research/2026-02-25-opinion-piece-on-llms-in-production.md"
+    },
+    {
+      "id": "q-20260225-709",
+      "topic": "Tmux workflows",
+      "description": "i'm comfortable with some basic things like toggling between sessions, windows, panes, creating new sessions, windows, renaming windows. all that is great. it would be nice to know if anyone is doing anything cool or innovative that seems structurally sound with agentic engineering workflows with tmux. ex: i could imagine a cool notification or something that opens the correct session/window/pane when claude needs attention or my title in my terminal changes depending on what session i'm in, or there's a brief description of what the agent in a particular window is working on at a given moment",
+      "tags": [],
+      "priority": 5,
+      "status": "completed",
+      "added": "2026-02-25T22:25:37.684Z",
+      "attempts": 1,
+      "maxAttempts": 2,
+      "model": "sonnet",
+      "started": "2026-02-26T00:00:02.015Z",
+      "completed": "2026-02-26T00:07:02.251Z",
+      "outputFile": "research/2026-02-26-tmux-workflows.md"
+    },
+    {
+      "id": "q-20260226-259",
+      "topic": "How AI should learn",
+      "description": "Paper 1: Weis et al., Google Paradigms of Intelligence, Feb 18. Train sequence model agents against diverse opponents in the Iterated Prisoner's Dilemma. No meta-gradients, no handcrafted learning rules. Cooperation emerges from standard RL. \n\nPaper 2: Li et al., Google DeepMind, Feb 21. Use AlphaEvolve to evolve game-solving source code. The discovered variants outperform every human-designed baseline across 11 games.￼",
+      "tags": [],
+      "priority": 5,
+      "status": "completed",
+      "added": "2026-02-26T09:12:20.920Z",
+      "attempts": 1,
+      "maxAttempts": 2,
+      "model": "sonnet",
+      "started": "2026-02-26T10:00:04.113Z",
+      "completed": "2026-02-26T10:06:13.601Z",
+      "outputFile": "research/2026-02-26-how-ai-should-learn.md"
+    },
+    {
+      "id": "q-20260226-700",
+      "topic": "Idea: chatbot with human in the loop context management",
+      "description": "Select context somehow and when the agent’s context window grows to a certain point, the human is given a selection lf what to remove from context, what to summarize, and what to replace it with. At any point the human can swap out pieces of context",
+      "tags": [],
+      "priority": 5,
+      "status": "completed",
+      "added": "2026-02-26T09:19:04.408Z",
+      "attempts": 1,
+      "maxAttempts": 2,
+      "model": "sonnet",
+      "started": "2026-02-26T10:06:14.444Z",
+      "completed": "2026-02-26T10:11:11.093Z",
+      "outputFile": "research/2026-02-26-idea-chatbot-with-human-in-the-loop-context-management.md"
+    },
+    {
+      "id": "q-20260226-428",
+      "topic": "Free day",
+      "description": "Go look up whatever you want. Pick something you find interesting and enjoyable",
+      "tags": [],
+      "priority": 5,
+      "status": "completed",
+      "added": "2026-02-26T09:33:21.045Z",
+      "attempts": 2,
+      "maxAttempts": 2,
+      "model": "sonnet",
+      "started": "2026-02-26T10:11:11.945Z",
+      "completed": "2026-02-26T10:16:27.456Z",
+      "outputFile": "research/2026-02-26-free-day.md"
     }
   ]
 }
