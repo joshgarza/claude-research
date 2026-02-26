@@ -24,3 +24,4 @@
 - **search-analytics-observability.md** — Search engine selection (Typesense/Meilisearch/Elasticsearch), event taxonomy (Object-Action naming), hybrid tracking, PostHog as SMB default, A/B testing (CUPED + sequential testing), warehouse as single source of truth, OTel business metrics
 - **vlm-basics.md** — VLM architecture (ViT encoder + projector + LLM), CLIP/SigLIP foundations, three-stage training, token budget, hallucination, model selection by use case
 - **terminal-tmux-agentic.md** — Lifecycle hooks for window state, emoji window names, clickable notifications with pane jump, worktree+window isolation, AI-generated names, monitoring dashboards for 5+ agents
+- **ai-learning-mechanisms.md** — How AI systems should acquire learning behaviors: diversity over hand-coded rules, emergent meta-learning from sequence models, program-as-genome evolution, cooperation from RL without explicit alignment
