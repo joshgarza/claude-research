@@ -89,17 +89,11 @@ async function generateDigest(files: ResearchFile[]): Promise<DigestResult> {
     .map((f) => `### ${f.topic} (${f.date})\nTags: ${f.tags.join(", ")}\n\n${f.content}`)
     .join("\n\n---\n\n");
 
-  const systemPrompt = `You are a research digest generator. You synthesize multiple research files into a concise, actionable daily digest. Your output is markdown.
-
-IMPORTANT: Your response must start with a single line containing ONLY a one-or-two word label describing the overall theme of today's research (e.g., "agent-orchestration", "security-tooling", "frontend-updates"). Use lowercase with hyphens, no spaces. This label will be used in the filename.
-
-After the label line, output the full digest markdown.`;
+  const systemPrompt = `You are a research digest generator. You synthesize multiple research files into a concise, actionable daily digest. Your output is markdown only — no preamble, no labels, just the digest content.`;
 
   const userPrompt = `Generate a daily research digest from the following ${files.length} research files completed recently.
 
-First line: a one-or-two word filename label (lowercase, hyphens, no spaces) capturing the dominant theme.
-
-Then the digest in this format:
+Output format:
 \`\`\`
 ---
 date: ${today}
@@ -146,14 +140,30 @@ ${filesSummary}`;
   const response = await stream.finalMessage();
 
   const textBlock = response.content.find((b) => b.type === "text");
-  const fullText = textBlock?.text ?? "";
+  const digest = textBlock?.text?.trim() ?? "";
 
-  // Extract the short label from the first line
-  const lines = fullText.split("\n");
-  const shortLabel = lines[0].trim().replace(/[^a-z0-9-]/g, "").slice(0, 30) || "digest";
-  const digest = lines.slice(1).join("\n").trim();
+  // Extract a short label via a separate focused call
+  const shortLabel = await extractLabel(client, files);
 
   return { digest, shortLabel };
+}
+
+async function extractLabel(client: Anthropic, files: ResearchFile[]): Promise<string> {
+  const topics = files.map((f) => f.topic).join(", ");
+  const response = await client.messages.create({
+    model: "claude-haiku-4-5-20251001",
+    max_tokens: 30,
+    messages: [
+      {
+        role: "user",
+        content: `Given these research topics: ${topics}\n\nRespond with ONLY a 1-2 word lowercase hyphenated label for the dominant theme (e.g. "agent-orchestration"). No other text.`,
+      },
+    ],
+  });
+
+  const text = response.content.find((b) => b.type === "text")?.text ?? "";
+  const label = text.trim().replace(/[^a-z0-9-]/g, "").slice(0, 30);
+  return label || "digest";
 }
 
 async function main(): Promise<void> {
