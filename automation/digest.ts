@@ -142,8 +142,15 @@ ${filesSummary}`;
   const textBlock = response.content.find((b) => b.type === "text");
   const digest = textBlock?.text?.trim() ?? "";
 
-  // Extract a short label via a separate focused call
-  const shortLabel = await extractLabel(client, files);
+  // Extract a short label via a separate focused call.
+  // Failures here should not prevent writing the digest.
+  let shortLabel: string;
+  try {
+    shortLabel = await extractLabel(client, files);
+  } catch (err) {
+    console.warn("Label extraction failed, using fallback:", (err as Error).message);
+    shortLabel = "digest";
+  }
 
   return { digest, shortLabel };
 }

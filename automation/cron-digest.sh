@@ -16,4 +16,7 @@ export NVM_DIR="$HOME/.nvm"
 
 cd /home/josh/coding/claude/research
 
+# Ensure log directory exists for cron output redirect
+mkdir -p /home/josh/coding/claude/research/automation/logs
+
 node --experimental-strip-types automation/digest.ts
