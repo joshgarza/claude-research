@@ -1,16 +1,16 @@
-// Generates a weekly digest of recent research findings.
+// Generates a daily digest of previous day's research findings.
 // Uses the Anthropic API directly (not Claude Code) — simple text in, text out.
 //
-// Usage: node --experimental-strip-types automation/digest.ts [--days 7]
+// Usage: node --experimental-strip-types automation/digest.ts [--days 1]
 
-import { readFileSync, writeFileSync, readdirSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync } from "node:fs";
 import { resolve, join } from "node:path";
 import Anthropic from "@anthropic-ai/sdk";
 
 const PROJECT_ROOT = resolve(import.meta.dirname, "..");
 const RESEARCH_DIR = resolve(PROJECT_ROOT, "research");
-const DIGESTS_DIR = resolve(RESEARCH_DIR, "digests");
-const DEFAULT_DAYS = 7;
+const DIGESTS_DIR = resolve(PROJECT_ROOT, "digests");
+const DEFAULT_DAYS = 1;
 
 function parseArgs(): { days: number } {
   const args = process.argv.slice(2);
@@ -76,7 +76,12 @@ function getRecentResearchFiles(days: number): ResearchFile[] {
   }).filter((f): f is ResearchFile => f !== null);
 }
 
-async function generateDigest(files: ResearchFile[]): Promise<string> {
+interface DigestResult {
+  digest: string;
+  shortLabel: string;
+}
+
+async function generateDigest(files: ResearchFile[]): Promise<DigestResult> {
   const client = new Anthropic();
   const today = new Date().toISOString().split("T")[0];
 
@@ -84,38 +89,38 @@ async function generateDigest(files: ResearchFile[]): Promise<string> {
     .map((f) => `### ${f.topic} (${f.date})\nTags: ${f.tags.join(", ")}\n\n${f.content}`)
     .join("\n\n---\n\n");
 
-  const systemPrompt = `You are a research digest generator. You synthesize multiple research files into a concise, actionable weekly digest. Your output is markdown.`;
+  const systemPrompt = `You are a research digest generator. You synthesize multiple research files into a concise, actionable daily digest. Your output is markdown only — no preamble, no labels, just the digest content.`;
 
-  const userPrompt = `Generate a weekly research digest from the following ${files.length} research files completed in the last week.
+  const userPrompt = `Generate a daily research digest from the following ${files.length} research files completed recently.
 
 Output format:
 \`\`\`
 ---
 date: ${today}
-type: weekly-digest
+type: daily-digest
 period: ${files[0]?.date || today} to ${files[files.length - 1]?.date || today}
 files: ${files.length}
 ---
 
-# Research Digest — Week of ${today}
+# Daily Research Digest — ${today}
 
 ## Summary
-A 2-3 sentence overview of what was covered this week.
+A 2-3 sentence overview of what was covered.
 
 ## Topics
 
 ### [Topic Name]
-1-2 paragraph summary of key findings. Focus on actionable insights and decisions it informs.
+1-2 paragraph summary of key findings. Focus on actionable insights.
 - **Key takeaway:** One sentence.
 - **Source:** [filename]
 
 (repeat for each topic)
 
 ## Cross-Cutting Themes
-Patterns, connections, or tensions that span multiple topics.
+Patterns or connections that span multiple topics.
 
 ## Key Takeaways
-Numbered list of the 5-7 most important insights across all research.
+Numbered list of the most important insights.
 
 ## Open Questions
 Questions that emerged and remain unanswered.
@@ -125,7 +130,6 @@ Here are the research files:
 
 ${filesSummary}`;
 
-  // Use streaming with finalMessage to avoid timeout on large context
   const stream = client.messages.stream({
     model: "claude-sonnet-4-6",
     max_tokens: 4096,
@@ -136,14 +140,44 @@ ${filesSummary}`;
   const response = await stream.finalMessage();
 
   const textBlock = response.content.find((b) => b.type === "text");
-  return textBlock?.text ?? "";
+  const digest = textBlock?.text?.trim() ?? "";
+
+  // Extract a short label via a separate focused call.
+  // Failures here should not prevent writing the digest.
+  let shortLabel: string;
+  try {
+    shortLabel = await extractLabel(client, files);
+  } catch (err) {
+    console.warn("Label extraction failed, using fallback:", (err as Error).message);
+    shortLabel = "digest";
+  }
+
+  return { digest, shortLabel };
+}
+
+async function extractLabel(client: Anthropic, files: ResearchFile[]): Promise<string> {
+  const topics = files.map((f) => f.topic).join(", ");
+  const response = await client.messages.create({
+    model: "claude-haiku-4-5-20251001",
+    max_tokens: 30,
+    messages: [
+      {
+        role: "user",
+        content: `Given these research topics: ${topics}\n\nRespond with ONLY a 1-2 word lowercase hyphenated label for the dominant theme (e.g. "agent-orchestration"). No other text.`,
+      },
+    ],
+  });
+
+  const text = response.content.find((b) => b.type === "text")?.text ?? "";
+  const label = text.trim().replace(/[^a-z0-9-]/g, "").slice(0, 30);
+  return label || "digest";
 }
 
 async function main(): Promise<void> {
   const { days } = parseArgs();
   const today = new Date().toISOString().split("T")[0];
 
-  console.log(`Generating digest for last ${days} days...`);
+  console.log(`Generating daily digest for last ${days} day(s)...`);
 
   const files = getRecentResearchFiles(days);
 
@@ -157,8 +191,12 @@ async function main(): Promise<void> {
     console.log(`  - ${f.topic} (${f.date})`);
   }
 
-  const digest = await generateDigest(files);
-  const outputFile = join(DIGESTS_DIR, `${today}-weekly.md`);
+  if (!existsSync(DIGESTS_DIR)) {
+    mkdirSync(DIGESTS_DIR, { recursive: true });
+  }
+
+  const { digest, shortLabel } = await generateDigest(files);
+  const outputFile = join(DIGESTS_DIR, `${today}_${shortLabel}.md`);
 
   writeFileSync(outputFile, digest);
   console.log(`\nDigest written to: ${outputFile}`);
