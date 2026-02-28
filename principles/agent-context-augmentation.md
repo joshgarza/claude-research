@@ -82,5 +82,24 @@ Key interaction rules:
 - When Tier 1 conflicts with Tier 2, behavior is unpredictable (avoid conflicts)
 - Use hierarchical routing when Tier 2 libraries exceed ~50 skills
 
+### Index + On-Demand Loading for Memory Trees
+- **What:** Use a concise index file (MEMORY.md, projectbrief.md, or equivalent) as the sole always-loaded file in a memory tree. Keep it under 200 lines. Store detailed notes in topic-specific satellite files that Claude loads on demand.
+- **Why:** Claude Code's auto-memory enforces this: only the first 200 lines of MEMORY.md load automatically; topic files (debugging.md, api-conventions.md) load when Claude needs them. This prevents context bloat from irrelevant detail while keeping orientation fast. The Cline Memory Bank, SpillwaveSolutions project-memory, and Claude Cognitive all independently converge on this index-first pattern.
+- **When:** Any multi-session project where accumulated knowledge exceeds ~150 lines. Split topic domains into separate files. Use the index to summarize what lives where. Never flatten everything into a single growing file.
+- **Source:** research/2026-02-28-investigate-the-folder-tree-memory-system-approach... (official Claude Code docs, Cline Memory Bank, SpillwaveSolutions/project-memory)
+
+### Separate Personal vs Team Memory
+- **What:** Use Claude's auto-memory (`~/.claude/projects/<project>/memory/`) for Claude's own notes — personal, not version-controlled. Use `.claude/rules/*.md` for team-shared conventions — version-controlled, human-authored. Never conflate the two.
+- **Why:** Auto-memory is Claude-written and personal: it captures what Claude discovers, not what the team agreed on. Rules files are human-written and team-shared: they encode conventions, not Claude's inferences. Mixing them produces stale team instructions (Claude's old notes) or lost personal insights (overwritten by git pulls).
+- **When:** Always. As a project grows, the distinction matters more: auto-memory evolves per-developer, rules files evolve per-team.
+- **Source:** research/2026-02-28-investigate-the-folder-tree-memory-system-approach... (official Claude Code docs, community practice)
+
+### Never Shadow Built-in Commands with Custom Skills
+- **What:** Do not create a custom skill named `memory` (or any built-in command name). The skill would shadow the built-in `/memory` command, losing access to the file selector and auto-memory toggle. Use distinct names: `/memory-update`, `/mem-tree`, `/project-memory`.
+- **Why:** Claude Code resolves user-invocable skills before built-in commands when the names conflict. The built-in `/memory` command provides the file selector UI and auto-memory toggle — functionality that cannot be replicated in a custom skill. Losing access to it breaks memory management for the session.
+- **When:** When authoring any custom skill. Always check the built-in command list before choosing a skill name.
+- **Source:** research/2026-02-28-investigate-the-folder-tree-memory-system-approach... (Claude Code skills docs, community reports)
+
 ## Revision History
 - 2026-02-24: Initial extraction from agent context augmentation landscape research. 10 principles from 25+ papers and 6 industry sources.
+- 2026-02-28: Added 3 principles from folder-tree memory system research: index+on-demand loading, personal vs team memory separation, built-in command shadowing risk. Sources: official Claude Code docs, Cline Memory Bank, SpillwaveSolutions/project-memory, Claude Cognitive.

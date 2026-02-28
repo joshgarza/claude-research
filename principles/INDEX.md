@@ -25,3 +25,5 @@
 - **vlm-basics.md** — VLM architecture (ViT encoder + projector + LLM), CLIP/SigLIP foundations, three-stage training, token budget, hallucination, model selection by use case
 - **terminal-tmux-agentic.md** — Lifecycle hooks for window state, emoji window names, clickable notifications with pane jump, worktree+window isolation, AI-generated names, monitoring dashboards for 5+ agents
 - **ai-learning-mechanisms.md** — How AI systems should acquire learning behaviors: diversity over hand-coded rules, emergent meta-learning from sequence models, program-as-genome evolution, cooperation from RL without explicit alignment
+- **zkml-verifiable-ai.md** — ZKP for LLMs (verifiable inference, training, fine-tuning), zkML frameworks, overhead reality, governance use cases, Optimistic zkML pattern
+- **cat-petting.md** — Evidence-based cat petting: CAT framework (Choice/Control/Attention/Touch), preferred facial zones, consent test, overstimulation signals, shy cat desensitization
