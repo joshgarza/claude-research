@@ -12,6 +12,7 @@ import {
   updateQueueItem,
   markThoughtProcessed,
   recoverStuckItems,
+  syncHopperResearchItems,
 } from "./db.ts";
 import { readFileSync } from "node:fs";
 import { buildPrompt, getExpectedOutputFile } from "./prompt.ts";
@@ -267,6 +268,11 @@ async function main(): Promise<void> {
   const db = openDb();
 
   try {
+    const synced = syncHopperResearchItems(db);
+    if (synced > 0) {
+      log("INFO", null, `Synced ${synced} new research-topic thought(s) from hopper`);
+    }
+
     const recovered = recoverStuckItems(db);
     if (recovered > 0) {
       log("INFO", null, `Recovered ${recovered} stuck item(s)`);

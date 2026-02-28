@@ -226,6 +226,26 @@ export function insertQueueItem(
   );
 }
 
+export function syncHopperResearchItems(db: DatabaseSync): number {
+  const rows = db
+    .prepare(
+      `SELECT id, raw_input, context FROM thoughts
+       WHERE category = 'research-topic'
+         AND status = 'processed'
+         AND id NOT IN (SELECT thought_id FROM svc_research_queue_items)`
+    )
+    .all() as { id: number; raw_input: string; context: string | null }[];
+
+  for (const row of rows) {
+    db.prepare(
+      `INSERT INTO svc_research_queue_items (thought_id, status, priority, model, max_attempts, attempts)
+       VALUES (?, 'queued', 5, 'sonnet', 2, 0)`
+    ).run(row.id);
+  }
+
+  return rows.length;
+}
+
 export function recoverStuckItems(db: DatabaseSync): number {
   const running = getRunningQueueItems(db);
   let recovered = 0;
