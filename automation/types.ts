@@ -2,6 +2,7 @@
 
 export interface QueueItem {
   id: string;
+  svcId?: number; // DB-backed items only: svc_research_queue_items.id
   topic: string;
   description: string;
   tags: string[];

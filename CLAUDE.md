@@ -42,9 +42,16 @@ CLAUDE.md          # This file — the single entry point for every session
 
 1. **Read this file** (`CLAUDE.md`) in full.
 2. **Check `sessions.md`** to understand what's been explored recently.
-3. **Search `principles/` first.** Principles are the primary knowledge base — distilled, opinionated, and tested. If relevant principles exist, use them as the starting point.
-4. **Fall back to `research/` only if needed.** If principles don't exist for the topic, or if you need supplementary detail (dates, sources, open questions) that principles don't capture, search raw research files.
-5. **Start from scratch if neither exists.** If no principles or research cover the topic, begin fresh web research.
+3. **Query principles from the DB first.** Principles are the primary knowledge base — distilled, opinionated, and tested.
+   ```
+   node --experimental-strip-types automation/query-db.ts principles <relevant terms>
+   ```
+   The DB is the canonical source. Principle files in `principles/` are kept in sync as readable backups.
+4. **Query prior research from the DB** if needed for supplementary detail.
+   ```
+   node --experimental-strip-types automation/query-db.ts research <relevant terms>
+   ```
+5. **Start from scratch if neither exists.** Begin fresh web research.
 6. **Begin research.** Follow the research file format below.
 
 ### Ending a Session

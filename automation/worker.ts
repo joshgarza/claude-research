@@ -1,16 +1,26 @@
 // Main worker for automated research pipeline.
 // Picks the highest-priority queued item, runs Claude Code headless, validates output.
 
-import { readFileSync, writeFileSync, appendFileSync, existsSync, unlinkSync } from "node:fs";
+import { writeFileSync, appendFileSync, existsSync, unlinkSync } from "node:fs";
 import { resolve } from "node:path";
 import { execSync, spawnSync } from "node:child_process";
-import type { Queue, QueueItem, AllowedToolsConfig } from "./types.ts";
+import type { AllowedToolsConfig } from "./types.ts";
+import {
+  openDb,
+  getNextQueueItem,
+  getRunningQueueItems,
+  updateQueueItem,
+  markThoughtProcessed,
+  recoverStuckItems,
+} from "./db.ts";
+import { readFileSync } from "node:fs";
 import { buildPrompt, getExpectedOutputFile } from "./prompt.ts";
 import { validate } from "./validate.ts";
+import type { QueueItem } from "./types.ts";
+import { DatabaseSync } from "node:sqlite";
 
 const AUTOMATION_DIR = import.meta.dirname;
 const PROJECT_ROOT = resolve(AUTOMATION_DIR, "..");
-const QUEUE_PATH = resolve(AUTOMATION_DIR, "queue.json");
 const ALLOWED_TOOLS_PATH = resolve(AUTOMATION_DIR, "allowed-tools.json");
 const LOCK_PATH = resolve(AUTOMATION_DIR, "logs", "worker.lock");
 const LOGS_DIR = resolve(AUTOMATION_DIR, "logs");
@@ -37,10 +47,10 @@ function acquireLock(): boolean {
     const lockContent = readFileSync(LOCK_PATH, "utf-8");
     const lockTime = parseInt(lockContent, 10);
     if (Date.now() - lockTime < LOCK_TTL_MS) {
-      console.error("Worker already running (lock held). Skipping.");
+      log("WARN", null, "Worker already running (lock held). Skipping.");
       return false;
     }
-    console.log("Stale lock found, removing.");
+    log("INFO", null, "Stale lock found, removing.");
     unlinkSync(LOCK_PATH);
   }
   writeFileSync(LOCK_PATH, Date.now().toString());
@@ -51,44 +61,6 @@ function releaseLock(): void {
   if (existsSync(LOCK_PATH)) {
     unlinkSync(LOCK_PATH);
   }
-}
-
-// --- Queue management ---
-
-function readQueue(): Queue {
-  return JSON.parse(readFileSync(QUEUE_PATH, "utf-8"));
-}
-
-function writeQueue(queue: Queue): void {
-  writeFileSync(QUEUE_PATH, JSON.stringify(queue, null, 2) + "\n");
-}
-
-function pickNextItem(queue: Queue): QueueItem | null {
-  const candidates = queue.items
-    .filter((i) => i.status === "queued")
-    .sort((a, b) => a.priority - b.priority);
-  return candidates[0] ?? null;
-}
-
-function recoverStuckItems(queue: Queue): number {
-  let recovered = 0;
-  for (const item of queue.items) {
-    if (item.status !== "running") continue;
-
-    if (item.attempts >= item.maxAttempts) {
-      item.status = "failed";
-      item.error = "Worker crashed or timed out";
-      log("WARN", item.id, `Recovered stuck item — max attempts reached, marking as failed`);
-    } else {
-      item.status = "queued";
-      log("WARN", item.id, `Recovered stuck item — re-queued (attempt ${item.attempts}/${item.maxAttempts})`);
-    }
-    recovered++;
-  }
-  if (recovered > 0) {
-    writeQueue(queue);
-  }
-  return recovered;
 }
 
 // --- Tool whitelist ---
@@ -102,28 +74,38 @@ function loadAllowedTools(): string[] {
 
 // --- Main ---
 
-function processItem(item: QueueItem, queue: Queue): void {
-  log("INFO", item.id, `Picked "${item.topic}" (priority ${item.priority}, attempt ${item.attempts + 1}/${item.maxAttempts})`);
+function processItem(item: QueueItem, db: DatabaseSync): void {
+  const svcId = item.svcId!;
+  log(
+    "INFO",
+    item.id,
+    `Picked "${item.topic}" (priority ${item.priority}, attempt ${item.attempts + 1}/${item.maxAttempts})`
+  );
 
   // Mark as running
-  item.status = "running";
-  item.attempts += 1;
-  item.started = new Date().toISOString();
-  writeQueue(queue);
+  const newAttempts = item.attempts + 1;
+  const startedAt = new Date().toISOString();
+  updateQueueItem(db, svcId, {
+    status: "running",
+    attempts: newAttempts,
+    startedAt,
+  });
 
   const prompt = buildPrompt(item);
   const allowedTools = loadAllowedTools();
   const expectedOutput = getExpectedOutputFile(item);
-  const logFile = resolve(LOGS_DIR, `${item.id}-attempt${item.attempts}.json`);
+  const logFile = resolve(LOGS_DIR, `${item.id}-attempt${newAttempts}.json`);
 
   const startTime = Date.now();
 
-  // Build claude command args (prompt piped via stdin)
   const claudeArgs = [
     "-p",
-    "--model", item.model,
-    "--output-format", "json",
-    "--allowedTools", ...allowedTools,
+    "--model",
+    item.model,
+    "--output-format",
+    "json",
+    "--allowedTools",
+    ...allowedTools,
   ];
 
   let claudeOutput: string;
@@ -148,12 +130,17 @@ function processItem(item: QueueItem, queue: Queue): void {
 
     if (result.status !== 0) {
       log("ERROR", item.id, `Claude exited with code ${result.status}`);
-      if (claudeStderr) log("ERROR", item.id, `stderr: ${claudeStderr.slice(0, 500)}`);
+      if (claudeStderr)
+        log("ERROR", item.id, `stderr: ${claudeStderr.slice(0, 500)}`);
     }
     success = result.status === 0;
   } catch (err: any) {
     claudeOutput = err.message || "Unknown error";
-    log("ERROR", item.id, `Claude invocation failed: ${err.message?.slice(0, 500)}`);
+    log(
+      "ERROR",
+      item.id,
+      `Claude invocation failed: ${err.message?.slice(0, 500)}`
+    );
   }
 
   const durationMs = Date.now() - startTime;
@@ -161,10 +148,15 @@ function processItem(item: QueueItem, queue: Queue): void {
 
   // Check for permission-related issues in stderr only (not claudeOutput, which contains
   // research content that may legitimately discuss permissions/auth topics)
-  const permissionPatterns = /tool.*not allowed|permission denied|unauthorized.*tool|disallowed.*tool/i;
+  const permissionPatterns =
+    /tool.*not allowed|permission denied|unauthorized.*tool|disallowed.*tool/i;
   const outputHasPermissionIssue = permissionPatterns.test(claudeStderr);
   if (outputHasPermissionIssue) {
-    log("WARN", item.id, "Possible permission issue detected in Claude output — check detailed log");
+    log(
+      "WARN",
+      item.id,
+      "Possible permission issue detected in Claude output — check detailed log"
+    );
   }
 
   // Save raw output to logs
@@ -186,15 +178,27 @@ function processItem(item: QueueItem, queue: Queue): void {
     )
   );
 
-  log("INFO", item.id, `Claude finished in ${durationSec}s (exit=${success ? "ok" : "fail"}). Validating...`);
+  log(
+    "INFO",
+    item.id,
+    `Claude finished in ${durationSec}s (exit=${success ? "ok" : "fail"}). Validating...`
+  );
 
   // Validate output
   const validation = validate(item, expectedOutput);
 
   if (validation.valid) {
-    item.status = "completed";
-    item.completed = new Date().toISOString();
-    item.outputFile = expectedOutput;
+    const completedAt = new Date().toISOString();
+    updateQueueItem(db, svcId, {
+      status: "completed",
+      completedAt,
+      outputFile: expectedOutput,
+    });
+    // Extract thought_id from item.id ("t-{thought_id}")
+    const thoughtId = parseInt(item.id.replace("t-", ""), 10);
+    if (!isNaN(thoughtId)) {
+      markThoughtProcessed(db, thoughtId);
+    }
     log("OK", item.id, `Validation passed in ${durationSec}s`);
 
     if (validation.warnings.length > 0) {
@@ -210,22 +214,34 @@ function processItem(item: QueueItem, queue: Queue): void {
       });
       log("OK", item.id, "Pushed to remote");
     } catch (pushErr: any) {
-      log("ERROR", item.id, `Git push failed (commit is local): ${pushErr.message?.slice(0, 200)}`);
+      log(
+        "ERROR",
+        item.id,
+        `Git push failed (commit is local): ${pushErr.message?.slice(0, 200)}`
+      );
     }
   } else {
     log("ERROR", item.id, `Validation failed: ${validation.errors.join("; ")}`);
 
-    if (item.attempts >= item.maxAttempts) {
-      item.status = "failed";
-      item.error = validation.errors.join("; ");
-      log("ERROR", item.id, `Max attempts (${item.maxAttempts}) reached, marking as failed`);
+    if (newAttempts >= item.maxAttempts) {
+      updateQueueItem(db, svcId, {
+        status: "failed",
+        error: validation.errors.join("; "),
+      });
+      log(
+        "ERROR",
+        item.id,
+        `Max attempts (${item.maxAttempts}) reached, marking as failed`
+      );
     } else {
-      item.status = "queued"; // Re-queue for retry
-      log("WARN", item.id, `Re-queued for retry (attempt ${item.attempts}/${item.maxAttempts})`);
+      updateQueueItem(db, svcId, { status: "queued" });
+      log(
+        "WARN",
+        item.id,
+        `Re-queued for retry (attempt ${newAttempts}/${item.maxAttempts})`
+      );
     }
   }
-
-  writeQueue(queue);
 
   // Safety: ensure CLAUDE.md wasn't modified
   try {
@@ -248,20 +264,20 @@ async function main(): Promise<void> {
     process.exit(0);
   }
 
+  const db = openDb();
+
   try {
-    const queue = readQueue();
-    recoverStuckItems(queue);
+    const recovered = recoverStuckItems(db);
+    if (recovered > 0) {
+      log("INFO", null, `Recovered ${recovered} stuck item(s)`);
+    }
 
     let processed = 0;
     let item: QueueItem | null;
 
-    while ((item = pickNextItem(queue)) !== null) {
-      processItem(item, queue);
+    while ((item = getNextQueueItem(db)) !== null) {
+      processItem(item, db);
       processed++;
-
-      // Re-read queue in case it was modified externally (e.g. new items enqueued)
-      const freshQueue = readQueue();
-      queue.items = freshQueue.items;
     }
 
     if (processed === 0) {
@@ -277,12 +293,11 @@ async function main(): Promise<void> {
 main().catch((err) => {
   log("ERROR", null, `Worker crashed: ${err.message || err}`);
 
-  // Reset any item stuck as "running" so it can be retried
   try {
-    const queue = readQueue();
-    recoverStuckItems(queue);
+    const db = openDb();
+    recoverStuckItems(db);
   } catch {
-    // Queue file may be corrupted — nothing we can do
+    // DB may be unavailable — nothing we can do
   }
 
   releaseLock();

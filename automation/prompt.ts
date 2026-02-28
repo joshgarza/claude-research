@@ -28,8 +28,10 @@ Today's date: ${TODAY}
 ### Step 1: Orient
 1. Read \`CLAUDE.md\` to understand the project structure and conventions.
 2. Read \`sessions.md\` to see what's been explored recently.
-3. Search \`principles/\` for any existing principles related to this topic.
-4. Search \`research/\` for any prior research on this topic.
+3. Search for existing principles related to this topic:
+   \`node --experimental-strip-types automation/query-db.ts principles ${item.tags.slice(0, 3).join(" ") || item.topic.split(" ").slice(0, 3).join(" ")}\`
+4. Search for prior research on this topic:
+   \`node --experimental-strip-types automation/query-db.ts research ${item.topic.split(" ").slice(0, 3).join(" ")}\`
 5. Note what already exists so you don't duplicate it.
 
 ### Step 2: Research

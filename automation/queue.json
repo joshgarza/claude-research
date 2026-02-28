@@ -412,6 +412,21 @@
       "started": "2026-02-26T10:11:11.945Z",
       "completed": "2026-02-26T10:16:27.456Z",
       "outputFile": "research/2026-02-26-free-day.md"
+    },
+    {
+      "id": "q-20260227-384",
+      "topic": "The Winning Lottery Ticket",
+      "description": "MIT Research about pruning dense networks. I saw a claim: delete 90% of a neural network while maintaining accuracy. Fact check this and dig into the research.",
+      "tags": [],
+      "priority": 5,
+      "status": "completed",
+      "added": "2026-02-27T07:49:32.812Z",
+      "attempts": 1,
+      "maxAttempts": 2,
+      "model": "opus",
+      "started": "2026-02-27T08:00:03.521Z",
+      "completed": "2026-02-27T08:04:58.623Z",
+      "outputFile": "research/2026-02-27-the-winning-lottery-ticket.md"
     }
   ]
 }

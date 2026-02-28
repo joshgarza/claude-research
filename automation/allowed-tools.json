@@ -12,9 +12,11 @@
     "Bash(git status:*)",
     "Bash(git diff:*)",
     "Bash(git log:*)",
-    "Bash(ls:*)"
+    "Bash(ls:*)",
+    "Bash(node --experimental-strip-types automation/query-db.ts:*)"
   ],
   "changelog": [
-    "2026-02-18: Initial set — file ops, web research, git staging/committing"
+    "2026-02-18: Initial set — file ops, web research, git staging/committing",
+    "2026-02-27: Added query-db.ts helper for searching principles and research history from Hopper DB"
   ]
 }
