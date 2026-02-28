@@ -177,12 +177,14 @@ export function markThoughtProcessed(
   ).run(thoughtId);
 }
 
-function ensureTag(db: DatabaseSync, name: string): number {
-  const existing = db
-    .prepare("SELECT id FROM tags WHERE name = ?")
-    .get(name) as { id: number } | undefined;
+function ensureTag(
+  selectTag: ReturnType<DatabaseSync["prepare"]>,
+  insertTag: ReturnType<DatabaseSync["prepare"]>,
+  name: string
+): number {
+  const existing = selectTag.get(name) as { id: number } | undefined;
   if (existing) return existing.id;
-  const result = db.prepare("INSERT INTO tags (name) VALUES (?)").run(name);
+  const result = insertTag.run(name);
   return result.lastInsertRowid as number;
 }
 
@@ -207,11 +209,14 @@ export function insertQueueItem(
     .run(item.description, context);
   const thoughtId = thoughtResult.lastInsertRowid as number;
 
+  const selectTag = db.prepare("SELECT id FROM tags WHERE name = ?");
+  const insertTag = db.prepare("INSERT INTO tags (name) VALUES (?)");
+  const insertThoughtTag = db.prepare(
+    "INSERT OR IGNORE INTO thought_tags (thought_id, tag_id) VALUES (?, ?)"
+  );
   for (const tagName of item.tags) {
-    const tagId = ensureTag(db, tagName);
-    db.prepare(
-      "INSERT OR IGNORE INTO thought_tags (thought_id, tag_id) VALUES (?, ?)"
-    ).run(thoughtId, tagId);
+    const tagId = ensureTag(selectTag, insertTag, tagName);
+    insertThoughtTag.run(thoughtId, tagId);
   }
 
   const svcResult = db
