@@ -32,6 +32,9 @@ function initSchema(db: DatabaseSync): void {
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     )
   `);
+  db.exec(
+    `CREATE UNIQUE INDEX IF NOT EXISTS idx_svc_research_thought_id ON svc_research_queue_items(thought_id)`
+  );
 }
 
 // --- Internal helpers ---
@@ -236,11 +239,12 @@ export function syncHopperResearchItems(db: DatabaseSync): number {
     )
     .all() as { id: number; raw_input: string; context: string | null }[];
 
+  const insert = db.prepare(
+    `INSERT OR IGNORE INTO svc_research_queue_items (thought_id, status, priority, model, max_attempts, attempts)
+     VALUES (?, 'queued', 5, 'sonnet', 2, 0)`
+  );
   for (const row of rows) {
-    db.prepare(
-      `INSERT INTO svc_research_queue_items (thought_id, status, priority, model, max_attempts, attempts)
-       VALUES (?, 'queued', 5, 'sonnet', 2, 0)`
-    ).run(row.id);
+    insert.run(row.id);
   }
 
   return rows.length;
