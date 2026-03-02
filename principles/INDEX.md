@@ -27,3 +27,4 @@
 - **ai-learning-mechanisms.md** — How AI systems should acquire learning behaviors: diversity over hand-coded rules, emergent meta-learning from sequence models, program-as-genome evolution, cooperation from RL without explicit alignment
 - **zkml-verifiable-ai.md** — ZKP for LLMs (verifiable inference, training, fine-tuning), zkML frameworks, overhead reality, governance use cases, Optimistic zkML pattern
 - **cat-petting.md** — Evidence-based cat petting: CAT framework (Choice/Control/Attention/Touch), preferred facial zones, consent test, overstimulation signals, shy cat desensitization
+- **claude-code-headless.md** — Headless mode feature parity: CLAUDE.md/settings/hooks/MCP/auto-memory all load; only user-invoked slash commands are interactive-only; CLAUDE_CODE_SIMPLE for bare-metal execution; in-process JS hooks require SDK packages
