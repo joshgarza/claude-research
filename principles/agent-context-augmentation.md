@@ -100,6 +100,28 @@ Key interaction rules:
 - **When:** When authoring any custom skill. Always check the built-in command list before choosing a skill name.
 - **Source:** research/2026-02-28-investigate-the-folder-tree-memory-system-approach... (Claude Code skills docs, community reports)
 
+### Treat Skills as Software with Quality Gates
+
+- **What:** Write evals (test prompts + assertions) for every non-trivial skill. Use skill-creator's Eval and Benchmark modes to gate changes and detect regressions.
+- **Why:** Without evals, skill changes are blind. An ETH Zurich study showed developer-written context files improved task completion by only 4%, while LLM-generated ones degraded by 3% — "unvalidated context is useless." Evals transform skill authoring into a software development practice. They also detect when model upgrades make a skill redundant or broken. Total cost for ~250 Claude invocations (a full eval suite) is ~$5-6.
+- **When:** For any skill invoked frequently or with side effects (commit, deploy, implement). At minimum: 2-3 realistic test prompts per skill. Run benchmarks when: (a) skill content changes, (b) the underlying model upgrades, (c) skill stops triggering or starts producing unexpected output.
+- **Source:** research/2026-03-06-look-into-plugins-skill-creator-in-claude... (Claude Blog, Tessl, Scott Spence sandboxed evals)
+
+### Optimize Skill Descriptions with Trigger Evals
+
+- **What:** Measure skill triggering accuracy (precision + recall) using structured eval sets before finalizing a skill description. Use skill-creator's description optimization loop to find the best-performing description automatically.
+- **Why:** A skill only helps if it triggers correctly. Sandboxed eval research shows baseline activation varies from 41% to 100% depending on hook/description configuration. Even without hooks, a poorly-written description causes Claude to miss the skill ~45-50% of the time on relevant queries. The optimization loop tested against 6 public skills improved triggering on 5 of 6. "Make descriptions pushy" — include specific contexts where the skill should trigger, even if not explicitly mentioned.
+- **When:** After writing a new skill or whenever users report the skill isn't activating when expected. Generate 20 trigger evals (8-10 should-trigger, 8-10 near-miss should-not-trigger). Use realistic, concrete prompts — not generic ones.
+- **Source:** research/2026-03-06-look-into-plugins-skill-creator-in-claude... (Claude Blog, Scott Spence sandboxed evals)
+
+### Benchmark Skills on Model Upgrades
+
+- **What:** Re-run skill benchmarks whenever the underlying model changes. Skills that passed on one model may break or become redundant on a newer one.
+- **Why:** Sandboxed eval research shows baseline skill activation improved from ~0% (Haiku 4.5) to 55% (Sonnet 4.5) purely due to model capability — without any skill changes. Skills written to compensate for model gaps may become dead weight or worse as models improve. Running benchmarks on model upgrade gives an early signal before it impacts team work.
+- **When:** Any model version change in production. Also: periodically audit skills that have been stable for >3 months — check if baseline (no-skill) performance has caught up.
+- **Source:** research/2026-03-06-look-into-plugins-skill-creator-in-claude... (Claude Blog, Scott Spence sandboxed evals, Tessl)
+
 ## Revision History
 - 2026-02-24: Initial extraction from agent context augmentation landscape research. 10 principles from 25+ papers and 6 industry sources.
 - 2026-02-28: Added 3 principles from folder-tree memory system research: index+on-demand loading, personal vs team memory separation, built-in command shadowing risk. Sources: official Claude Code docs, Cline Memory Bank, SpillwaveSolutions/project-memory, Claude Cognitive.
+- 2026-03-06: Added 3 principles from skill-creator research: eval-driven quality gates, description trigger optimization, model-upgrade benchmark cadence. Sources: Claude Blog, Tessl, Scott Spence sandboxed evals.
