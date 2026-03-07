@@ -24,6 +24,30 @@ Principles for integrating LLMs into production applications. Covers architectur
 - **When:** Any agent or multi-turn system. For single-shot generation, traditional prompt engineering is sufficient.
 - **Source:** research/2026-02-14-ai-llm-integration-practices.md (Anthropic "Effective Context Engineering," September 2025)
 
+### The Dumb Zone: Manage Context Proactively
+- **What:** LLM reasoning quality degrades significantly around 40% of context window utilization. Treat this threshold as a hard ceiling — compact context before reaching it, not after quality has degraded.
+- **Why:** Context is the only lever in a stateless LLM system. Once in the dumb zone, even good prompts produce lower-quality, incoherent output. Reactive correction loops (telling the agent it made a mistake) make things worse by adding more tokens.
+- **When:** Any long-running agent session, especially coding agents working in complex codebases. Common causes of premature degradation: unfiltered JSON/log dumps, repetitive correction loops, irrelevant file reads, verbose chat history.
+- **Source:** research/2026-03-07-look-into-this-video-on-ai-engineering-https-youtu-be-rmvdxxnubig-si-j5g-dqftekbqpmhf.md (Dex Horthy, HumanLayer, AI Engineer 2025)
+
+### RPI Workflow for Complex Codebases
+- **What:** Structure AI-assisted development in brownfield codebases as three sequential phases: Research (understand, don't implement; produce compressed markdown summary), Plan (detailed spec with file names, line numbers, test criteria; human-reviewed), Implement (execute mechanically with fresh context window, compact progress back into plan).
+- **Why:** Naive "chat and correct" patterns create rework cycles and technical debt in complex codebases (Stanford 100K developer study). RPI prevents agents from implementing before they understand, and enables human review at the highest-leverage point (the plan) rather than after thousands of lines are written. Proven: 300K-line Rust codebase bugs fixed in ~1 hour, 35K lines shipped in 7 hours.
+- **When:** Scale application by task complexity: direct conversation for simple bugs/UI tweaks; light plan for small features; research + plan for cross-repository changes; full RPI + subagents for deep refactors. Not every task needs full RPI.
+- **Source:** research/2026-03-07-look-into-this-video-on-ai-engineering-https-youtu-be-rmvdxxnubig-si-j5g-dqftekbqpmhf.md (Dex Horthy, HumanLayer)
+
+### Intentional Compaction: Compress Before Context Exhausts
+- **What:** Before context approaches capacity, pause and consolidate accumulated knowledge into a structured artifact (goals, completed steps, key findings, current obstacles, next steps). Seed the next session from this document, not raw history. Use git commits as natural compaction boundaries.
+- **Why:** Context window limits are a manageable soft constraint, not a hard ceiling, if compaction is proactive. Multi-day problems can be solved without quality degradation when each session starts from a high-quality compressed state. Reactive compaction (after quality degrades) is too late.
+- **When:** Any agent session expected to exceed a single context window. Use subagents for scoped search/discovery tasks to prevent the main agent's context from being consumed by file exploration.
+- **Source:** research/2026-03-07-look-into-this-video-on-ai-engineering-https-youtu-be-rmvdxxnubig-si-j5g-dqftekbqpmhf.md (Dex Horthy, HumanLayer)
+
+### Review at the Plan, Not the Code
+- **What:** Concentrate human review effort on research documents and implementation plans, not on generated code. A bad plan produces hundreds of bad lines; a bad line of code is localized. Reviewing a 200-line plan is higher-leverage than reviewing a 2,000-line PR.
+- **Why:** As AI authorship of code increases, traditional line-by-line code review scales poorly. Research and plan artifacts are also essential for team mental alignment — they keep engineers architecturally coherent even when they did not write the implementation. Treating specs as primary artifacts shifts the SDLC to match AI-first development.
+- **When:** Any team where AI generates a significant share of implementation code. Requires changing PR review culture: focus on architectural correctness of the plan, not syntactic correctness of the code.
+- **Source:** research/2026-03-07-look-into-this-video-on-ai-engineering-https-youtu-be-rmvdxxnubig-si-j5g-dqftekbqpmhf.md (Dex Horthy, HumanLayer; Blake Smith's mental alignment framework)
+
 ### Design Tools as Agent UX
 - **What:** Agent tools are not API wrappers. Combine frequently-chained operations into single calls. Descriptions are prompts — iterate them based on eval results. Return high-signal data, implement pagination/truncation, make errors actionable.
 - **Why:** Agents perceive different affordances than humans. A well-designed tool interface provides guardrails while giving flexibility. Poor tool design is the #1 cause of agent failure in production.
@@ -68,3 +92,4 @@ Principles for integrating LLMs into production applications. Covers architectur
 
 ## Revision History
 - 2026-02-14: Initial extraction from AI/LLM integration research session.
+- 2026-03-07: Added 4 new principles (Dumb Zone, RPI Workflow, Intentional Compaction, Review at the Plan) from Dex Horthy / HumanLayer "No Vibes Allowed" AI Engineer 2025 talk.
