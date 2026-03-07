@@ -19,6 +19,7 @@
 - **recommendation-engine.md** — Multi-vector venues, taste clustering, MaxSim scoring, cold start, conversational search
 - **agent-task-orchestration.md** — Swarm patterns, ticket decomposition, Claude Code Teams, event-driven pipelines
 - **agent-context-augmentation.md** — Context file design (CLAUDE.md/AGENTS.md/Skills), 150-line rule, evidence-based augmentation
+- **agent-orchestration.md** — Router agents, gateway MCP, tiered context, session lifecycle (briefing/wrap-up), approval gates, multi-interface separation, headless Claude Code cost control
 - **migration-legacy-modernization.md** — Strangler Fig, parallel systems (shadow/canary/dark launch), CDC data migration, feature parity trap, seam identification, ACL, leave-and-layer
 - **team-process-practices.md** — Code review standards (PR size, turnaround, culture), ADRs (when/templates/storage), technical debt (Fowler quadrant, SonarQube/CodeScene, allocation), on-call (rotation, runbooks, postmortems), documentation (Diátaxis, docs-as-code)
 - **search-analytics-observability.md** — Search engine selection (Typesense/Meilisearch/Elasticsearch), event taxonomy (Object-Action naming), hybrid tracking, PostHog as SMB default, A/B testing (CUPED + sequential testing), warehouse as single source of truth, OTel business metrics
@@ -28,3 +29,4 @@
 - **zkml-verifiable-ai.md** — ZKP for LLMs (verifiable inference, training, fine-tuning), zkML frameworks, overhead reality, governance use cases, Optimistic zkML pattern
 - **cat-petting.md** — Evidence-based cat petting: CAT framework (Choice/Control/Attention/Touch), preferred facial zones, consent test, overstimulation signals, shy cat desensitization
 - **claude-code-headless.md** — Headless mode feature parity: CLAUDE.md/settings/hooks/MCP/auto-memory all load; only user-invoked slash commands are interactive-only; CLAUDE_CODE_SIMPLE for bare-metal execution; in-process JS hooks require SDK packages
+- **youtube-transcription.md** — youtube-transcript-api as default (no API key), proxy config for cloud, yt-dlp+Whisper fallback, skip official YouTube Data API v3
