@@ -144,8 +144,21 @@ Principles for coordinating AI agents through shared task systems — from flat 
 - **When:** After any significant model upgrade. Run A/B tests comparing the current harness structure against a simplified version. If the simpler version performs equally or better, ship the simplification.
 - **Source:** research/2026-02-25-agent-harnesses.md (Manus context engineering, LangChain harness taxonomy, Philschmid agent harness 2026)
 
+### Match Harness Interface to the Human Feedback Loop
+- **What:** Choose terminal-first, IDE-first, or sandboxed harnesses based on where the human feedback loop actually lives. Use terminal-first tools for repo-wide, test-driven work, IDE-first tools for fast inspect-edit-approve loops, and sandboxed runners for higher-autonomy tasks that should not execute directly on the host environment.
+- **Why:** The current open source tool landscape has converged on these distinct interaction models. Aider and OpenCode are terminal-first. Roo Code explicitly positions its VS Code extension for deep, iterative solo development. OpenHands explicitly frames itself as a sandboxed task runner with clear task-fit guidance. When the interface model mismatches the task, teams compensate with more prompt text and more tools, which does not fix the underlying friction.
+- **When:** During initial harness selection, and whenever a tool feels too slow, too invasive, or too detached from the actual way work is being reviewed. Change the interface model before adding more context files or custom tools.
+- **Source:** research/2026-03-13-research-into-open-source-agentic-harnesses-for-local-development.md (Aider, OpenCode, Roo Code, OpenHands docs)
+
+### Autonomy Must Scale With Isolation
+- **What:** Increase filesystem and process isolation as you increase auto-approve, terminal access, and long-running autonomy. Git worktrees are the minimum. Containers or other sandboxes are preferred once the agent can execute broad commands without approval.
+- **Why:** Cline's YOLO mode explicitly disables safety checks. Roo Code encourages increasing trust and auto-approve over time. OpenHands draws hard sandbox boundaries and still recommends review, lint, build, tests, and manual validation. High-autonomy host access is the highest-risk local-development configuration.
+- **When:** Before enabling auto-approve, broad MCP tool access, package installation, browser automation, or long-running delegated work. If you cannot isolate the environment, keep approvals conservative.
+- **Source:** research/2026-03-13-research-into-open-source-agentic-harnesses-for-local-development.md (Cline, Roo Code, OpenHands, OpenCode docs)
+
 ## Revision History
 - 2026-02-23: Initial extraction from AI agent ticket orchestration research session. 11 principles from 15+ sources.
 - 2026-02-24: Added 3 principles from Overstory deep-dive: mechanical enforcement, two-layer instructions, WAL mode. (11→14 principles)
 - 2026-02-25: Added 4 principles from queue/concurrency research: bounded worker pool, token bucket, graduation path, domain-partitioned queues. (14→18 principles)
 - 2026-02-25: Added 4 principles from agent harnesses research: harness determines augmentation effectiveness, fewer general-purpose tools, externalize session state, harness must evolve with models. (18→22 principles)
+- 2026-03-13: Added 2 principles from open source local harnesses research: match interface to the human feedback loop, and scale autonomy with isolation. (22→24 principles)

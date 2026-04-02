@@ -73,5 +73,18 @@ Replacing or modernizing a legacy system is one of the highest-risk engineering 
 - **When:** Pre-migration baseline, then continuous tracking. Don't wait until migration is "done" — measuring incrementally shows progress and maintains stakeholder buy-in.
 - **Source:** [research/2026-02-24-migration-legacy-modernization.md](../research/2026-02-24-migration-legacy-modernization.md)
 
+### Preserve Expert Workflow During Front-End Replacement
+- **What:** When replacing a command-heavy expert terminal, preserve operator identity, task flow, and a temporary compatibility path while retraining toward the new front end. Treat the change as workflow migration, not just UI migration.
+- **Why:** China TravelSky's retirement of ETERM was accompanied by bridge surfaces such as official mobile access, service portals, work-number binding, online training, and staged deprecation. That reduces cutover shock for trained operators and makes it possible to retire the old surface without losing operational continuity.
+- **When:** Migrations of legacy operational software used daily by trained specialists, especially in regulated environments. Not usually necessary for greenfield products or low-frequency consumer UIs.
+- **Source:** [research/2026-03-14-look-into-eyterm.md](../research/2026-03-14-look-into-eyterm.md)
+
+### Ship the Support Plane With the New Front End
+- **What:** Build notices, identity workflows, fault reporting, training, and help-desk access into the migration plan and product surface. Do not treat support as a side document.
+- **Why:** In distributed operational environments, login issues, account binding, and exception handling can sink a front-end migration even when the new application itself works. TravelSky's public service portal and assistant app show support operations being productized alongside the `共翔天易` transition.
+- **When:** Any migration where many operators must cut over in a short window, especially when accounts, permissions, or compliance workflows are involved.
+- **Source:** [research/2026-03-14-look-into-eyterm.md](../research/2026-03-14-look-into-eyterm.md)
+
 ## Revision History
 - 2026-02-24: Initial extraction from research/2026-02-24-migration-legacy-modernization.md. Covers: Strangler Fig, parallel systems (shadow/dark launch/canary), data migration at scale (CDC, batched backfill, expand/contract), feature parity trap, seam identification (Event Storming/DDD), anti-corruption layer, leave-and-layer, decommission discipline, and measurement.
+- 2026-03-14: Updated from [research/2026-03-14-look-into-eyterm.md](../research/2026-03-14-look-into-eyterm.md) with principles on preserving expert workflows during terminal replacement and making support surfaces part of the migration itself.

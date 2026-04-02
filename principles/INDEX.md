@@ -2,6 +2,7 @@
 
 - **frontend-engineering.md** — Meta-frameworks, RSC, state management, tooling (Vite, pnpm, Turborepo), TypeScript, CSS
 - **backend-api-engineering.md** — Hono/Fastify, tRPC, Zod validation, auth (passkeys), caching, observability, MCP/A2A
+- **hexagonal-architecture.md** — Ports and adapters, decision criteria, domain-language ports, inward dependencies, testing and boundary enforcement
 - **database-data-architecture.md** — PostgreSQL as default, schema design, indexing, connection pooling, migrations, edge DBs
 - **devops-infrastructure.md** — IaC, CI/CD, containers, GitOps, platform engineering, supply chain security, observability
 - **testing-strategy.md** — Testing Trophy (integration-heavy), Vitest, Playwright, Testcontainers, contract testing, k6
@@ -13,19 +14,25 @@
 - **api-versioning-evolution.md** — Versioning strategies, backwards compatibility, OpenAPI from Zod, SDK generation, deprecation
 - **data-privacy-compliance.md** — GDPR/CCPA implementation, PII encryption, consent, data retention, deletion, cross-border
 - **integration-patterns.md** — External system integration, messaging platforms, subprocess RPC, real-time streams
+- **web-crawling.md** — Choosing between scrape, bounded crawl, site sync, and custom crawler; static-first extraction; robots, sitemaps, and allowlists
 - **ai-tool-adoption.md** — Team training, enterprise rollout, spec-first workflow, pair prompting, senior-junior asymmetry, metrics
 - **engineering-sources.md** — Where to find high-quality sources by stack layer (T1/T2/T3 ranking)
 - **real-time-event-driven.md** — SSE vs WebSocket, event sourcing, CQRS, outbox pattern, broker selection
 - **recommendation-engine.md** — Multi-vector venues, taste clustering, MaxSim scoring, cold start, conversational search
 - **agent-task-orchestration.md** — Swarm patterns, ticket decomposition, Claude Code Teams, event-driven pipelines
+- **codex-review-orchestration.md** — Choosing between GitHub-native review, `codex exec`, GitHub Action, `AGENTS.md`, and thin custom controllers
 - **agent-context-augmentation.md** — Context file design (CLAUDE.md/AGENTS.md/Skills), 150-line rule, evidence-based augmentation
+- **knowledge-base-automation.md** — Choosing between desktop CLI, headless sync, REST/MCP, and filesystem access for AI workflows over markdown knowledge bases
 - **agent-orchestration.md** — Router agents, gateway MCP, tiered context, session lifecycle (briefing/wrap-up), approval gates, multi-interface separation, headless Claude Code cost control
+- **perplexity-orchestration.md** — Choosing between Search API, Sonar, Agent API, Research Mode, Spaces, and MCP; retrieval constraints, async deep research, provenance capture
 - **migration-legacy-modernization.md** — Strangler Fig, parallel systems (shadow/canary/dark launch), CDC data migration, feature parity trap, seam identification, ACL, leave-and-layer
+- **post-quantum-blockchain-security.md** — Rank quantum risk by key exposure and privilege concentration, reduce exposure immediately, build cryptographic agility first, and separate dormant-asset governance from active-asset migration
 - **team-process-practices.md** — Code review standards (PR size, turnaround, culture), ADRs (when/templates/storage), technical debt (Fowler quadrant, SonarQube/CodeScene, allocation), on-call (rotation, runbooks, postmortems), documentation (Diátaxis, docs-as-code)
 - **search-analytics-observability.md** — Search engine selection (Typesense/Meilisearch/Elasticsearch), event taxonomy (Object-Action naming), hybrid tracking, PostHog as SMB default, A/B testing (CUPED + sequential testing), warehouse as single source of truth, OTel business metrics
 - **vlm-basics.md** — VLM architecture (ViT encoder + projector + LLM), CLIP/SigLIP foundations, three-stage training, token budget, hallucination, model selection by use case
 - **terminal-tmux-agentic.md** — Lifecycle hooks for window state, emoji window names, clickable notifications with pane jump, worktree+window isolation, AI-generated names, monitoring dashboards for 5+ agents
 - **ai-learning-mechanisms.md** — How AI systems should acquire learning behaviors: diversity over hand-coded rules, emergent meta-learning from sequence models, program-as-genome evolution, cooperation from RL without explicit alignment
+- **ai-consciousness-claims.md** — Evaluating AI sentience anecdotes: provenance before phenomenology, autonomy vs consciousness, persona-shaped self-reports, repeatable trace evidence
 - **zkml-verifiable-ai.md** — ZKP for LLMs (verifiable inference, training, fine-tuning), zkML frameworks, overhead reality, governance use cases, Optimistic zkML pattern
 - **cat-petting.md** — Evidence-based cat petting: CAT framework (Choice/Control/Attention/Touch), preferred facial zones, consent test, overstimulation signals, shy cat desensitization
 - **claude-code-headless.md** — Headless mode feature parity: CLAUDE.md/settings/hooks/MCP/auto-memory all load; only user-invoked slash commands are interactive-only; CLAUDE_CODE_SIMPLE for bare-metal execution; in-process JS hooks require SDK packages
