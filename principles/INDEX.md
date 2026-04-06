@@ -1,6 +1,7 @@
 # Principles Index
 
 - **frontend-engineering.md** — Meta-frameworks, RSC, state management, tooling (Vite, pnpm, Turborepo), TypeScript, CSS
+- **micro-frontends.md** — When to adopt micro-frontends, runtime composition vs build-time coupling, platform shells, shared dependencies, contracts, and integrated testing
 - **backend-api-engineering.md** — Hono/Fastify, tRPC, Zod validation, auth (passkeys), caching, observability, MCP/A2A
 - **hexagonal-architecture.md** — Ports and adapters, decision criteria, domain-language ports, inward dependencies, testing and boundary enforcement
 - **database-data-architecture.md** — PostgreSQL as default, schema design, indexing, connection pooling, migrations, edge DBs
